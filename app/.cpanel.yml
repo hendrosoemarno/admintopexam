@@ -1,0 +1,10 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/hendrosoemarno/admintopexam/
+    - /bin/cp -R public $DEPLOYPATH
+    - /opt/cpanel/composer/bin/composer install -d $DEPLOYPATH --no-dev --optimize-autoloader
+    - php $DEPLOYPATH/artisan config:clear
+    - php $DEPLOYPATH/artisan config:cache
+    - php $DEPLOYPATH/artisan route:cache
+    - php $DEPLOYPATH/artisan view:cache
