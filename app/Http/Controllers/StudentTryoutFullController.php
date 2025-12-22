@@ -31,7 +31,7 @@ class StudentTryoutFullController extends Controller
             ");
 
         } catch (\Throwable $e) {
-            Log::error('Error fetching Try Out Full data: '.$e->getMessage());
+            Log::error('Error fetching Try Out Full data: ' . $e->getMessage());
             $data = [];
         }
 
@@ -39,45 +39,42 @@ class StudentTryoutFullController extends Controller
     }
 
 
-public function show($userid, $courseid)
-{
-    try {
-        // (1) Ambil info user + course
-        $result = DB::connection('moodle')->selectOne("
+    public function show($userid, $courseid)
+    {
+        try {
+            // (1) Ambil info user + course
+            $result = DB::connection('moodle')->selectOne("
             SELECT
                 u.firstname,
                 u.lastname,
                 c.fullname AS course
-            FROM mdlax_user u
-            JOIN mdlax_role_assignments ra ON ra.userid = u.id
-            JOIN mdlax_context ctx ON ctx.id = ra.contextid
-            JOIN mdlax_course c ON c.id = ctx.instanceid
+            FROM mdlax_user u, mdlax_course c
             WHERE u.id = ?
               AND c.id = ?
             LIMIT 1
         ", [$userid, $courseid]);
 
-        if (!$result) {
-            return back()->with('error', 'Data raport tidak ditemukan.');
-        }
+            if (!$result) {
+                return back()->with('error', 'Data raport tidak ditemukan.');
+            }
 
-        // (2) Ambil tanggal attempt terakhir di course Full
-        $lastAttempt = DB::connection('moodle')->selectOne("
+            // (2) Ambil tanggal attempt terakhir di course Full
+            $lastAttempt = DB::connection('moodle')->selectOne("
             SELECT FROM_UNIXTIME(MAX(qa.timefinish), '%d-%m-%Y %H:%i') AS tanggal
             FROM mdlax_quiz_attempts qa
             JOIN mdlax_quiz qz ON qz.id = qa.quiz
             WHERE qa.userid = ?
               AND qz.course = ?
-              AND qz.name LIKE '%Full%'
+              AND qz.name LIKE '%Try Out%'
         ", [$userid, $courseid]);
 
-        $result->tanggal = $lastAttempt ? $lastAttempt->tanggal : '-';
+            $result->tanggal = $lastAttempt ? $lastAttempt->tanggal : '-';
 
-        // (3) Ambil nilai per subkategori (s.full) — gunakan nilai final tiap questionattempt (MAX fraction)
-        $subkategori = DB::connection('moodle')->select("
+            // (3) Ambil nilai per subkategori (s.full) — gunakan nilai final tiap questionattempt (MAX fraction)
+            $subkategori = DB::connection('moodle')->select("
             SELECT
                 MIN(s.id) AS siapid,
-                s.full AS subkategori_nama,
+                s.`full` AS subkategori_nama,
                 s.keterangan AS bidang,
                 COUNT(qaq.questionattemptid) AS jumlah_soal,
                 ROUND(SUM(qaq.max_fraction), 6) AS skor
@@ -103,50 +100,50 @@ public function show($userid, $courseid)
 
             WHERE qa2.userid = ?
               AND qz.course = ?
-              AND qz.name LIKE '%Full%'
-            GROUP BY s.full, s.keterangan
-            ORDER BY s.keterangan, s.full
+              AND qz.name LIKE '%Try Out%'
+            GROUP BY s.`full`, s.keterangan
+            ORDER BY s.keterangan, s.`full`
         ", [$userid, $courseid]);
 
-        // (4) Inisialisasi hasil
-        $result->detail_math = [];
-        $result->detail_bin  = [];
+            // (4) Inisialisasi hasil
+            $result->detail_math = [];
+            $result->detail_bin = [];
 
-        // Untuk menghitung rata-rata subkategori: kita akan menjumlahkan persen tiap subkategori
-        // dan menghitung total maksimal (100 * jumlah_subkategori) lalu ambil persentase akhir.
-        $result->math_score_sum = 0.0;
-        $result->math_subcount = 0;
+            // Untuk menghitung rata-rata subkategori: kita akan menjumlahkan persen tiap subkategori
+            // dan menghitung total maksimal (100 * jumlah_subkategori) lalu ambil persentase akhir.
+            $result->math_score_sum = 0.0;
+            $result->math_subcount = 0;
 
-        $result->bin_score_sum = 0.0;
-        $result->bin_subcount = 0;
+            $result->bin_score_sum = 0.0;
+            $result->bin_subcount = 0;
 
-        // (5) Olah subkategori
-        foreach ($subkategori as $row) {
-            $skor  = (float) $row->skor;            // jumlah fraction (0..1 per soal) total untuk subkategori
-            $total = (int) $row->jumlah_soal;      // jumlah soal di subkategori
+            // (5) Olah subkategori
+            foreach ($subkategori as $row) {
+                $skor = (float) $row->skor;            // jumlah fraction (0..1 per soal) total untuk subkategori
+                $total = (int) $row->jumlah_soal;      // jumlah soal di subkategori
 
-            // persen subkategori (0..100)
-            $persen = $total > 0 ? round($skor * 100 / $total, 2) : 0.0;
+                // persen subkategori (0..100)
+                $persen = $total > 0 ? round($skor * 100 / $total, 2) : 0.0;
 
-            // Ambil deskripsi/keterangan dari mdlax_grade_description:
-            // untuk subkategori gunakan kolom 'kategori'
-            $gradeDesc = DB::connection('moodle')->selectOne("
+                // Ambil deskripsi/keterangan dari mdlax_grade_description:
+                // untuk subkategori gunakan kolom 'kategori'
+                $gradeDesc = DB::connection('moodle')->selectOne("
                 SELECT label, kategori AS keterangan
                 FROM mdlax_grade_description
                 WHERE :p BETWEEN range_min AND range_max
                 LIMIT 1
             ", ['p' => $persen]);
 
-            $label = $gradeDesc ? $gradeDesc->label : '-';
-            $desc  = $gradeDesc ? $gradeDesc->keterangan : '-';
+                $label = $gradeDesc ? $gradeDesc->label : '-';
+                $desc = $gradeDesc ? $gradeDesc->keterangan : '-';
 
                 // Tentukan kolom rekomendasi berdasarkan label
-                $kolom = match(strtolower($label)) {
-                    'kurang'     => 'rekom_full_kurang',
-                    'bisa'       => 'rekom_full_bisa',
-                    'kompeten'   => 'rekom_full_kompeten',
-                    'excellent'  => 'rekom_full_excelent',
-                    default      => 'rekom_full_kurang'
+                $kolom = match (strtolower($label)) {
+                    'kurang' => 'rekom_full_kurang',
+                    'bisa' => 'rekom_full_bisa',
+                    'kompeten' => 'rekom_full_kompeten',
+                    'excellent' => 'rekom_full_excelent',
+                    default => 'rekom_full_kurang'
                 };
 
                 // Ambil rekomendasi dari tabel mdlax_siap
@@ -157,88 +154,88 @@ public function show($userid, $courseid)
                 ", [$row->siapid]);
 
                 $item = [
-                'nama'   => $row->subkategori_nama,
-                'skor'   => $skor,
-                'total'  => $total,
-                'persen' => $persen,
-                'label'  => $label,
-                'rekom'  => $rekom ? $rekom->rekom : '-',
-                'desc'   => $desc,
-            ];
+                    'nama' => $row->subkategori_nama,
+                    'skor' => $skor,
+                    'total' => $total,
+                    'persen' => $persen,
+                    'label' => $label,
+                    'rekom' => $rekom ? $rekom->rekom : '-',
+                    'desc' => $desc,
+                ];
 
-            if (stripos($row->bidang, 'Matematika') !== false) {
-                $result->detail_math[] = $item;
-                $result->math_score_sum += $persen;
-                $result->math_subcount++;
-            } elseif (stripos($row->bidang, 'Bahasa Indonesia') !== false) {
-                $result->detail_bin[] = $item;
-                $result->bin_score_sum += $persen;
-                $result->bin_subcount++;
-            } else {
-                // jika ada bidang lain, bisa diabaikan atau ditampung sesuai kebutuhan
+                if (stripos($row->bidang, 'Matematika') !== false) {
+                    $result->detail_math[] = $item;
+                    $result->math_score_sum += $persen;
+                    $result->math_subcount++;
+                } elseif (stripos($row->bidang, 'Bahasa Indonesia') !== false) {
+                    $result->detail_bin[] = $item;
+                    $result->bin_score_sum += $persen;
+                    $result->bin_subcount++;
+                } else {
+                    // jika ada bidang lain, bisa diabaikan atau ditampung sesuai kebutuhan
+                }
             }
-        }
 
-        // (6) Hitung nilai akhir per mata pelajaran sebagai rata-rata persen subkategori (jika ada)
-        $result->math_final = $result->math_subcount > 0
-            ? round($result->math_score_sum / $result->math_subcount, 2)
-            : 0.0;
+            // (6) Hitung nilai akhir per mata pelajaran sebagai rata-rata persen subkategori (jika ada)
+            $result->math_final = $result->math_subcount > 0
+                ? round($result->math_score_sum / $result->math_subcount, 2)
+                : 0.0;
 
-        $result->bin_final = $result->bin_subcount > 0
-            ? round($result->bin_score_sum / $result->bin_subcount, 2)
-            : 0.0;
+            $result->bin_final = $result->bin_subcount > 0
+                ? round($result->bin_score_sum / $result->bin_subcount, 2)
+                : 0.0;
 
-        // (7) Hitung nilai keseluruhan sebagai rata-rata antara math_final dan bin_final (jika kedua ada),
-        // atau jika hanya satu mapel ada, ambil nilai mapel tersebut.
-        if ($result->math_subcount > 0 && $result->bin_subcount > 0) {
-            $result->nilai = round(($result->math_final + $result->bin_final) / 2, 2);
-        } elseif ($result->math_subcount > 0) {
-            $result->nilai = $result->math_final;
-        } elseif ($result->bin_subcount > 0) {
-            $result->nilai = $result->bin_final;
-        } else {
-            $result->nilai = 0.0;
-        }
+            // (7) Hitung nilai keseluruhan sebagai rata-rata antara math_final dan bin_final (jika kedua ada),
+            // atau jika hanya satu mapel ada, ambil nilai mapel tersebut.
+            if ($result->math_subcount > 0 && $result->bin_subcount > 0) {
+                $result->nilai = round(($result->math_final + $result->bin_final) / 2, 2);
+            } elseif ($result->math_subcount > 0) {
+                $result->nilai = $result->math_final;
+            } elseif ($result->bin_subcount > 0) {
+                $result->nilai = $result->bin_final;
+            } else {
+                $result->nilai = 0.0;
+            }
 
-        // (8) Ambil keterangan label & teks untuk matematika, bahasa, dan keseluruhan
-        $totalGrade = DB::connection('moodle')->selectOne("
+            // (8) Ambil keterangan label & teks untuk matematika, bahasa, dan keseluruhan
+            $totalGrade = DB::connection('moodle')->selectOne("
             SELECT label, keseluruhan AS keterangan
             FROM mdlax_grade_description
             WHERE :p BETWEEN range_min AND range_max
             LIMIT 1
         ", ['p' => $result->nilai]);
 
-        $mathGrade = DB::connection('moodle')->selectOne("
+            $mathGrade = DB::connection('moodle')->selectOne("
             SELECT label, matematika AS keterangan
             FROM mdlax_grade_description
             WHERE :p BETWEEN range_min AND range_max
             LIMIT 1
         ", ['p' => $result->math_final]);
 
-        $binGrade = DB::connection('moodle')->selectOne("
+            $binGrade = DB::connection('moodle')->selectOne("
             SELECT label, bahasa_indonesia AS keterangan
             FROM mdlax_grade_description
             WHERE :p BETWEEN range_min AND range_max
             LIMIT 1
         ", ['p' => $result->bin_final]);
 
-        $result->total_label = $totalGrade ? $totalGrade->label : '-';
-        $result->total_desc  = $totalGrade ? $totalGrade->keterangan : '-';
+            $result->total_label = $totalGrade ? $totalGrade->label : '-';
+            $result->total_desc = $totalGrade ? $totalGrade->keterangan : '-';
 
-        $result->math_label = $mathGrade ? $mathGrade->label : '-';
-        $result->math_desc  = $mathGrade ? $mathGrade->keterangan : '-';
+            $result->math_label = $mathGrade ? $mathGrade->label : '-';
+            $result->math_desc = $mathGrade ? $mathGrade->keterangan : '-';
 
-        $result->bin_label = $binGrade ? $binGrade->label : '-';
-        $result->bin_desc  = $binGrade ? $binGrade->keterangan : '-';
+            $result->bin_label = $binGrade ? $binGrade->label : '-';
+            $result->bin_desc = $binGrade ? $binGrade->keterangan : '-';
 
-    } catch (\Throwable $e) {
-        Log::error('Error fetching Try Out Full report: '.$e->getMessage());
-        return back()->with('error', 'Gagal mengambil data raport.');
+        } catch (\Throwable $e) {
+            Log::error('Error fetching Try Out Full report: ' . $e->getMessage());
+            return back()->with('error', 'Gagal mengambil data raport: ' . $e->getMessage());
+        }
+
+        return view('students.tryoutfull.report', compact('result'));
     }
 
-    return view('students.tryoutfull.report', compact('result'));
-}
- 
 
 
 

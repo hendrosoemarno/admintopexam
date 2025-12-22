@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use App\Models\ReportStatus;
+
+class StudentTryoutCompleteController extends Controller
+{
+    public function index(Request $request)
+    {
+        try {
+            // Default filter: Current Month
+            $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+            $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+
+            // Convert to timestamp for Moodle
+            $startTimestamp = Carbon::parse($startDate)->startOfDay()->timestamp;
+            $endTimestamp = Carbon::parse($endDate)->endOfDay()->timestamp;
+
+            $query = "
+                SELECT
+                    u.id AS userid,
+                    c.id AS courseid,
+                    qa2.id AS quizattemptsid,
+                    CONCAT(u.firstname, ' ', u.lastname) AS nama_siswa,
+                    c.fullname AS nama_course,
+                    qz.name AS nama_quiz,
+                    qa2.timestart AS tanggal_akses_ts
+                FROM mdlax_quiz_attempts qa2
+                JOIN mdlax_user u ON u.id = qa2.userid
+                JOIN mdlax_quiz qz ON qz.id = qa2.quiz
+                JOIN mdlax_course c ON c.id = qz.course
+                WHERE qz.name LIKE '%Try Out%'
+                  AND qa2.timestart BETWEEN ? AND ?
+                ORDER BY qa2.timestart DESC
+            ";
+
+            $data = DB::connection('moodle')->select($query, [$startTimestamp, $endTimestamp]);
+
+            // Get local statuses
+            $attemptIds = array_column($data, 'quizattemptsid');
+            $statuses = [];
+            if (!empty($attemptIds)) {
+                $statuses = ReportStatus::whereIn('quiz_attempt_id', $attemptIds)
+                    ->pluck('is_report_created', 'quiz_attempt_id')
+                    ->toArray();
+            }
+
+            // Merge status and format date
+            foreach ($data as $row) {
+                $row->tanggal_akses = Carbon::createFromTimestamp($row->tanggal_akses_ts)->format('d-m-Y H:i');
+                $row->is_report_created = isset($statuses[$row->quizattemptsid]) ? (bool) $statuses[$row->quizattemptsid] : false;
+            }
+
+        } catch (\Throwable $e) {
+            Log::error('Error fetching Try Out Complete data: ' . $e->getMessage());
+            $data = [];
+        }
+
+        return view('students.tryout_complete', compact('data', 'startDate', 'endDate'));
+    }
+
+    public function toggleStatus(Request $request)
+    {
+        $request->validate([
+            'quiz_attempt_id' => 'required|integer',
+            'status' => 'required|boolean'
+        ]);
+
+        try {
+            ReportStatus::updateOrCreate(
+                ['quiz_attempt_id' => $request->quiz_attempt_id],
+                ['is_report_created' => $request->status]
+            );
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+}

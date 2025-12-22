@@ -124,7 +124,7 @@ return [
         'prefix' => 'mdlax_',
         'strict' => true,
         'engine' => null,
-    ],
+        ],
 
     ],
 

@@ -17,7 +17,7 @@ class DashboardController extends Controller
             ->join('context AS c', 'c.id', '=', 'ra.contextid')
             ->join('course AS co', 'co.id', '=', 'c.instanceid')
             ->where('ra.roleid', 5)
-            ->select('u.id AS userid', 'u.firstname', 'u.lastname', 'u.email', 'co.fullname AS course')
+            ->select('u.id AS userid', 'u.firstname', 'u.lastname', 'u.email', 'co.fullname AS course', 'u.timecreated', 'u.lastaccess')
             ->orderBy('u.firstname')
             ->get();
 

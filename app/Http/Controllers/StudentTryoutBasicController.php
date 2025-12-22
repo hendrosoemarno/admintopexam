@@ -35,7 +35,7 @@ class StudentTryoutBasicController extends Controller
             ");
 
         } catch (\Throwable $e) {
-            Log::error('Error fetching Try Out Basic data: '.$e->getMessage());
+            Log::error('Error fetching Try Out Basic data: ' . $e->getMessage());
             $data = [];
         }
 
@@ -58,7 +58,6 @@ class StudentTryoutBasicController extends Controller
                 JOIN mdlax_quiz qz ON qz.id = qa.quiz
                 JOIN mdlax_course c ON c.id = qz.course
                 WHERE qa.id = ?
-                AND qz.name LIKE '%Basic%'
                 LIMIT 1
             ", [$quizattemptsid]);
 
@@ -95,25 +94,24 @@ class StudentTryoutBasicController extends Controller
 
                 JOIN mdlax_quiz qz ON qz.id = qa2.quiz
                 WHERE qa2.id = ?
-                AND qz.name LIKE '%Basic%'
                 GROUP BY s.basic, s.keterangan
                 ORDER BY s.keterangan, s.basic;
             ", [$quizattemptsid]);
 
             // 3) Inisialisasi
             $result->detail_math = [];
-            $result->detail_bin  = [];
+            $result->detail_bin = [];
 
-            $result->math_score  = 0;
-            $result->math_total  = 0;
+            $result->math_score = 0;
+            $result->math_total = 0;
 
-            $result->bin_score   = 0;
-            $result->bin_total   = 0;
+            $result->bin_score = 0;
+            $result->bin_total = 0;
 
             // 4) Olah setiap subkategori
             foreach ($subkategori as $row) {
-                $skor   = (float) $row->skor;
-                $total  = (int) $row->jumlah_soal;
+                $skor = (float) $row->skor;
+                $total = (int) $row->jumlah_soal;
 
                 // skor subkategori (%)
                 $persen = $total > 0 ? round(($skor * 100 / $total), 2) : 0;
@@ -127,15 +125,15 @@ class StudentTryoutBasicController extends Controller
                 ", ['p' => $persen]);
 
                 $label = $grade ? $grade->label : '-';
-                $desc  = $grade ? $grade->description : '-';
+                $desc = $grade ? $grade->description : '-';
 
                 // Tentukan kolom rekomendasi berdasarkan label
-                $kolom = match(strtolower($label)) {
-                    'kurang'     => 'rekom_basic_kurang',
-                    'bisa'       => 'rekom_basic_bisa',
-                    'kompeten'   => 'rekom_basic_kompeten',
-                    'excellent'  => 'rekom_basic_excelent',
-                    default      => 'rekom_basic_kurang'
+                $kolom = match (strtolower($label)) {
+                    'kurang' => 'rekom_basic_kurang',
+                    'bisa' => 'rekom_basic_bisa',
+                    'kompeten' => 'rekom_basic_kompeten',
+                    'excellent' => 'rekom_basic_excelent',
+                    default => 'rekom_basic_kurang'
                 };
 
                 // Ambil rekomendasi dari tabel mdlax_siap
@@ -146,11 +144,11 @@ class StudentTryoutBasicController extends Controller
                 ", [$row->siapid]);
 
                 $dataItem = [
-                    'nama'  => $row->subkategori_nama,
-                    'persen'=> $persen,      // <---- nilai /100
+                    'nama' => $row->subkategori_nama,
+                    'persen' => $persen,      // <---- nilai /100
                     'label' => $label,
-                    'desc'  => $desc,
-                    'rekom'  => $rekom ? $rekom->rekom : '-',
+                    'desc' => $desc,
+                    'rekom' => $rekom ? $rekom->rekom : '-',
                     'total' => $total
                 ];
 
@@ -170,8 +168,8 @@ class StudentTryoutBasicController extends Controller
             }
 
             // 5) Hitung nilai akhir /100
-            $result->math_final  = $result->math_total > 0 ? round(($result->math_score / $result->math_total) * 100, 2) : 0;
-            $result->bin_final   = $result->bin_total > 0 ? round(($result->bin_score / $result->bin_total) * 100, 2) : 0;
+            $result->math_final = $result->math_total > 0 ? round(($result->math_score / $result->math_total) * 100, 2) : 0;
+            $result->bin_final = $result->bin_total > 0 ? round(($result->bin_score / $result->bin_total) * 100, 2) : 0;
 
             // Total keseluruhan
             $result->nilai = round(($result->math_final + $result->bin_final) / 2, 2);
@@ -185,7 +183,7 @@ class StudentTryoutBasicController extends Controller
             ", ['p' => $result->nilai]);
 
             $result->total_label = $totalGrade ? $totalGrade->label : '-';
-            $result->total_desc  = $totalGrade ? $totalGrade->description : '-';
+            $result->total_desc = $totalGrade ? $totalGrade->description : '-';
 
             // label math
             $mathGrade = DB::connection('moodle')->selectOne("
@@ -196,7 +194,7 @@ class StudentTryoutBasicController extends Controller
             ", ['p' => $result->math_final]);
 
             $result->math_label = $mathGrade ? $mathGrade->label : '-';
-            $result->math_desc  = $mathGrade ? $mathGrade->description : '-';
+            $result->math_desc = $mathGrade ? $mathGrade->description : '-';
 
             // label bin
             $binGrade = DB::connection('moodle')->selectOne("
@@ -207,11 +205,11 @@ class StudentTryoutBasicController extends Controller
             ", ['p' => $result->bin_final]);
 
             $result->bin_label = $binGrade ? $binGrade->label : '-';
-            $result->bin_desc  = $binGrade ? $binGrade->description : '-';
+            $result->bin_desc = $binGrade ? $binGrade->description : '-';
 
 
         } catch (\Throwable $e) {
-            Log::error('Error fetching Try Out Basic report: '.$e->getMessage());
+            Log::error('Error fetching Try Out Basic report: ' . $e->getMessage());
             return back()->with('error', 'Gagal mengambil data raport.');
         }
 
