@@ -4,7 +4,7 @@
 
 @section('content')
     <div x-data="tryoutTable()" class="space-y-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <h2 class="text-2xl font-bold text-gray-800">Data Try Out Siswa Lengkap</h2>
 
             <!-- Date Filter Form -->
@@ -34,7 +34,7 @@
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd"
-                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a11-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                 clip-rule="evenodd" />
                         </svg>
                     </span>
@@ -43,7 +43,7 @@
                         placeholder="Cari siswa, course, atau quiz...">
                 </div>
                 <div class="text-sm text-gray-500">
-                    Menampilkan data bulan ini dan status laporan
+                    Menampilkan data yang disaring berdasarkan periode bulan
                 </div>
             </div>
 
@@ -51,9 +51,6 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Report Created?
-                            </th>
                             <th @click="sortByColumn('nama_siswa')"
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition select-none">
                                 <div class="flex items-center gap-1">
@@ -93,12 +90,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <template x-for="row in filteredData" :key="row.quizattemptsid">
-                            <tr class="hover:bg-blue-50 transition duration-150 ease-in-out"
-                                :class="{'bg-green-50': row.is_report_created}">
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
-                                    <input type="checkbox" :checked="row.is_report_created" @change="toggleReport(row)"
-                                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer">
-                                </td>
+                            <tr class="hover:bg-blue-50 transition duration-150 ease-in-out">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                                     x-text="row.nama_siswa"></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.nama_course"></td>
@@ -123,7 +115,7 @@
                             </tr>
                         </template>
                         <tr x-show="filteredData.length === 0">
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
                                 Tidak ada data tryout ditemukan pada periode ini.
                             </td>
                         </tr>
@@ -183,36 +175,6 @@
                         this.sortCol = col;
                         this.sortAsc = true;
                     }
-                },
-
-                toggleReport(row) {
-                    // Optimistic UI update
-                    const newState = !row.is_report_created;
-                    row.is_report_created = newState;
-
-                    fetch('{{ route("students.tryout_complete.toggle") }}', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            quiz_attempt_id: row.quizattemptsid,
-                            status: newState
-                        })
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (!data.success) {
-                                alert('Gagal memperbarui status!');
-                                row.is_report_created = !newState; // Revert
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            row.is_report_created = !newState; // Revert
-                            alert('Terjadi kesalahan jaringan.');
-                        });
                 }
             }
         }

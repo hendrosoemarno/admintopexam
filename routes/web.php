@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentScoreController;
 use App\Http\Controllers\StudentTryoutQuickController;
 use App\Http\Controllers\StudentTryoutBasicController;
 use App\Http\Controllers\StudentTryoutFullController;
+use App\Http\Controllers\StudentTryoutWhatsappController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,15 @@ Route::prefix('students')->group(function () {
     Route::get('/tryoutbasic/{id}', [StudentTryoutBasicController::class, 'show'])->name('students.tryoutbasic.report');
     Route::get('/tryoutfull', [StudentTryoutFullController::class, 'index'])->name('students.tryoutfull');
     Route::get('/tryoutfull/{userid}/{courseid}', [StudentTryoutFullController::class, 'show'])->name('students.tryoutfull.show');
+    Route::get('/tryoutwhatsapp', [StudentTryoutWhatsappController::class, 'index'])->name('students.tryoutwhatsapp');
+    Route::get('/tryoutwhatsapp/select/{userid}/{courseid}', [StudentTryoutWhatsappController::class, 'select'])->name('students.tryoutwhatsapp.select');
+    Route::get('/tryoutwhatsapp/report/{id?}', [StudentTryoutWhatsappController::class, 'show'])->name('students.tryoutwhatsapp.report');
+
+    // WA Report History
+    Route::get('/tryoutwhatsapp/history', [StudentTryoutWhatsappController::class, 'history'])->name('students.tryoutwhatsapp.history');
+    Route::post('/tryoutwhatsapp/store-report', [StudentTryoutWhatsappController::class, 'storeReport'])->name('students.tryoutwhatsapp.store_report');
+    Route::post('/tryoutwhatsapp/update-report/{id}', [StudentTryoutWhatsappController::class, 'updateReport'])->name('students.tryoutwhatsapp.update_report');
+    Route::delete('/tryoutwhatsapp/delete-report/{id}', [StudentTryoutWhatsappController::class, 'destroyReport'])->name('students.tryoutwhatsapp.delete_report');
     Route::get('/tryout-data', [App\Http\Controllers\StudentTryoutDataController::class, 'index'])->name('students.tryout_data');
 
     // Data Try Out Lengkap (Checklist)
@@ -61,5 +71,13 @@ Route::get('/setup-db-report-status', function () {
         return "Table 'report_statuses' already exists.";
     } catch (\Exception $e) {
         return "Error: " . $e->getMessage();
+    }
+});
+Route::get('/check-siap-cols', function () {
+    try {
+        $cols = DB::connection('moodle')->select("SHOW COLUMNS FROM mdlax_siap");
+        return response()->json($cols);
+    } catch (\Exception $e) {
+        return $e->getMessage();
     }
 });

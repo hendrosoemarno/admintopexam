@@ -69,6 +69,10 @@
                             class="block px-2 py-1 text-sm hover:bg-blue-100 rounded">
                             ✅ Data Try Out Lengkap
                         </a>
+                        <a href="{{ route('students.tryoutwhatsapp') }}"
+                            class="block px-2 py-1 text-sm hover:bg-blue-100 rounded">
+                            📱 Analisis WhatsApp
+                        </a>
                         <a href="{{ route('students.tryoutquick') }}"
                             class="block px-2 py-1 text-sm hover:bg-blue-100 rounded">
                             🚀 Try Out Quick

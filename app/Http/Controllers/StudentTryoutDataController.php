@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
-use App\Models\ReportStatus;
-
 class StudentTryoutDataController extends Controller
 {
     public function index(Request $request)
@@ -40,28 +38,11 @@ class StudentTryoutDataController extends Controller
                 ORDER BY qa2.timestart DESC
             ";
 
-            $raw_data = DB::connection('moodle')->select($query, [$startTimestamp, $endTimestamp]);
+            $data = DB::connection('moodle')->select($query, [$startTimestamp, $endTimestamp]);
 
-            // Get local statuses to exclude already created reports
-            $attemptIds = array_column($raw_data, 'quizattemptsid');
-            $excludeIds = [];
-            if (!empty($attemptIds)) {
-                $excludeIds = ReportStatus::whereIn('quiz_attempt_id', $attemptIds)
-                    ->where('is_report_created', true)
-                    ->pluck('quiz_attempt_id')
-                    ->toArray();
-            }
-
-            $data = [];
-            foreach ($raw_data as $row) {
-                if (in_array($row->quizattemptsid, $excludeIds)) {
-                    continue;
-                }
+            foreach ($data as $row) {
                 $row->tanggal_akses = Carbon::createFromTimestamp($row->tanggal_akses_ts)->format('d-m-Y H:i');
-                $data[] = $row;
             }
-
-        } catch (\Throwable $e) {
 
         } catch (\Throwable $e) {
             Log::error('Error fetching Try Out Data: ' . $e->getMessage());

@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\Models\ReportStatus;
 
 class StudentTryoutCompleteController extends Controller
 {
@@ -41,19 +40,9 @@ class StudentTryoutCompleteController extends Controller
 
             $data = DB::connection('moodle')->select($query, [$startTimestamp, $endTimestamp]);
 
-            // Get local statuses
-            $attemptIds = array_column($data, 'quizattemptsid');
-            $statuses = [];
-            if (!empty($attemptIds)) {
-                $statuses = ReportStatus::whereIn('quiz_attempt_id', $attemptIds)
-                    ->pluck('is_report_created', 'quiz_attempt_id')
-                    ->toArray();
-            }
-
-            // Merge status and format date
+            // Format date
             foreach ($data as $row) {
                 $row->tanggal_akses = Carbon::createFromTimestamp($row->tanggal_akses_ts)->format('d-m-Y H:i');
-                $row->is_report_created = isset($statuses[$row->quizattemptsid]) ? (bool) $statuses[$row->quizattemptsid] : false;
             }
 
         } catch (\Throwable $e) {
@@ -64,21 +53,5 @@ class StudentTryoutCompleteController extends Controller
         return view('students.tryout_complete', compact('data', 'startDate', 'endDate'));
     }
 
-    public function toggleStatus(Request $request)
-    {
-        $request->validate([
-            'quiz_attempt_id' => 'required|integer',
-            'status' => 'required|boolean'
-        ]);
-
-        try {
-            ReportStatus::updateOrCreate(
-                ['quiz_attempt_id' => $request->quiz_attempt_id],
-                ['is_report_created' => $request->status]
-            );
-            return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
-    }
+    // toggleStatus method removed as requested
 }
