@@ -40,10 +40,10 @@ Route::prefix('payment')->name('payment.')->group(function () {
 Route::middleware('moodle.auth')->prefix('settings')->name('settings.')->group(function () {
     Route::get('/', [App\Http\Controllers\SettingsController::class, 'index'])->name('index');
     Route::post('/packages', [App\Http\Controllers\SettingsController::class, 'storePackage'])->name('packages.store');
-    Route::put('/packages/{package}', [App\Http\Controllers\SettingsController::class, 'updatePackage'])->name('packages.update');
-    Route::delete('/packages/{package}', [App\Http\Controllers\SettingsController::class, 'destroyPackage'])->name('packages.destroy');
+    Route::match(['put', 'post'], '/packages/{package}', [App\Http\Controllers\SettingsController::class, 'updatePackage'])->name('packages.update');
+    Route::match(['delete', 'post'], '/packages/{package}', [App\Http\Controllers\SettingsController::class, 'destroyPackage'])->name('packages.destroy');
     Route::post('/coupons', [App\Http\Controllers\SettingsController::class, 'storeCoupon'])->name('coupons.store');
-    Route::put('/coupons/{coupon}', [App\Http\Controllers\SettingsController::class, 'updateCoupon'])->name('coupons.update');
+    Route::match(['put', 'post'], '/coupons/{coupon}', [App\Http\Controllers\SettingsController::class, 'updateCoupon'])->name('coupons.update');
     Route::delete('/coupons/{coupon}', [App\Http\Controllers\SettingsController::class, 'destroyCoupon'])->name('coupons.destroy');
     Route::post('/save', [App\Http\Controllers\SettingsController::class, 'saveSettings'])->name('save');
 });
