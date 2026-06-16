@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Setting extends Model
+{
+    protected $fillable = ['key', 'value'];
+
+    const CACHE_KEY = 'app_settings';
+
+    public static function getValue(string $key, $default = null): ?string
+    {
+        $setting = static::where('key', $key)->first();
+        return $setting ? $setting->value : $default;
+    }
+
+    public static function setValue(string $key, ?string $value): void
+    {
+        static::updateOrCreate(['key' => $key], ['value' => $value]);
+    }
+}

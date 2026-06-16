@@ -90,8 +90,8 @@
                 </div>
 
                 <!-- MENU LAIN -->
-                <a href="#" class="block p-2 rounded hover:bg-blue-100 font-medium">📚 Kursus</a>
-                <a href="#" class="block p-2 rounded hover:bg-blue-100 font-medium">⚙️ Pengaturan</a>
+                <a href="{{ route('packages.index') }}" target="_blank" class="block p-2 rounded hover:bg-blue-100 font-medium">📚 Kursus</a>
+                <a href="{{ route('settings.index') }}" class="block p-2 rounded hover:bg-blue-100 font-medium">⚙️ Pengaturan</a>
             </nav>
         </aside>
 

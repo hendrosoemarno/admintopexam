@@ -18,16 +18,35 @@ Route::get('/login', [MoodleLoginController::class, 'showLoginForm'])->name('moo
 Route::post('/login', [MoodleLoginController::class, 'login'])->name('moodle.login.submit');
 Route::get('/logout', [MoodleLoginController::class, 'logout'])->name('moodle.logout');
 
-Route::get('/dashboard', function () {
-    if (!session()->has('moodle_user')) {
-        return redirect()->route('moodle.login');
-    }
-    $user = session('moodle_user');
-    return view('dashboard', compact('user'));
-})->name('dashboard');
+Route::middleware('moodle.auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+});
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard');
+Route::prefix('packages')->name('packages.')->group(function () {
+    Route::get('/', [App\Http\Controllers\PackageController::class, 'index'])->name('index');
+});
+
+Route::prefix('register')->name('register.')->group(function () {
+    Route::get('/{package}', [App\Http\Controllers\RegistrationController::class, 'showForm'])->name('form');
+    Route::post('/', [App\Http\Controllers\RegistrationController::class, 'submit'])->name('submit');
+});
+
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::post('/callback', [App\Http\Controllers\PaymentController::class, 'callback'])->name('callback');
+    Route::get('/finish', [App\Http\Controllers\PaymentController::class, 'finish'])->name('finish');
+});
+
+Route::middleware('moodle.auth')->prefix('settings')->name('settings.')->group(function () {
+    Route::get('/', [App\Http\Controllers\SettingsController::class, 'index'])->name('index');
+    Route::post('/packages', [App\Http\Controllers\SettingsController::class, 'storePackage'])->name('packages.store');
+    Route::put('/packages/{package}', [App\Http\Controllers\SettingsController::class, 'updatePackage'])->name('packages.update');
+    Route::delete('/packages/{package}', [App\Http\Controllers\SettingsController::class, 'destroyPackage'])->name('packages.destroy');
+    Route::post('/coupons', [App\Http\Controllers\SettingsController::class, 'storeCoupon'])->name('coupons.store');
+    Route::put('/coupons/{coupon}', [App\Http\Controllers\SettingsController::class, 'updateCoupon'])->name('coupons.update');
+    Route::delete('/coupons/{coupon}', [App\Http\Controllers\SettingsController::class, 'destroyCoupon'])->name('coupons.destroy');
+    Route::post('/save', [App\Http\Controllers\SettingsController::class, 'saveSettings'])->name('save');
+});
 
 Route::prefix('students')->group(function () {
     Route::get('/', [StudentController::class, 'index'])->name('students.index');
