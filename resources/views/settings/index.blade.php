@@ -59,9 +59,10 @@
                             <td class="px-4 py-3 text-sm space-x-1">
                                 <button onclick="editPackage({{ $pkg->id }})"
                                         class="text-blue-600 hover:text-blue-800">Edit</button>
-                                <form action="{{ route('settings.packages.destroy', $pkg) }}" method="POST" class="inline"
-                                      onsubmit="return confirm('Hapus paket ini?')">
+                                <form action="{{ route('settings.packages.destroy') }}" method="POST" class="inline"
+                                      onsubmit="this.submitWithId('package_id', '{{ $pkg->id }}'); return confirm('Hapus paket ini?')">
                                     @csrf
+                                    <input type="hidden" name="package_id" value="{{ $pkg->id }}">
                                     <button class="text-red-600 hover:text-red-800">Hapus</button>
                                 </form>
                             </td>
@@ -75,6 +76,7 @@
         <dialog id="packageModal" class="rounded-2xl shadow-2xl p-0 w-full max-w-lg">
             <form id="packageForm" method="POST" class="p-6">
                 @csrf
+                <input type="hidden" name="package_id" id="pkg_id">
                 <h3 class="text-xl font-bold mb-4" id="packageModalTitle">Tambah Paket</h3>
                 <div class="space-y-4">
                     <div>
@@ -151,9 +153,10 @@
                             <td class="px-4 py-3 text-sm space-x-1">
                                 <button onclick="editCoupon({{ $cpn->id }})"
                                         class="text-blue-600 hover:text-blue-800">Edit</button>
-                                <form action="{{ route('settings.coupons.destroy', $cpn) }}" method="POST" class="inline"
+                                <form action="{{ route('settings.coupons.destroy') }}" method="POST" class="inline"
                                       onsubmit="return confirm('Hapus kupon ini?')">
                                     @csrf
+                                    <input type="hidden" name="coupon_id" value="{{ $cpn->id }}">
                                     <button class="text-red-600 hover:text-red-800">Hapus</button>
                                 </form>
                             </td>
@@ -167,6 +170,7 @@
         <dialog id="couponModal" class="rounded-2xl shadow-2xl p-0 w-full max-w-lg">
             <form id="couponForm" method="POST" class="p-6">
                 @csrf
+                <input type="hidden" name="coupon_id" id="cpn_id">
                 <h3 class="text-xl font-bold mb-4" id="couponModalTitle">Tambah Kupon</h3>
                 <div class="space-y-4">
                     <div>
@@ -272,6 +276,7 @@
     function openAddPackage() {
         document.getElementById('packageModalTitle').textContent = 'Tambah Paket';
         document.getElementById('packageForm').action = '{{ route('settings.packages.store') }}';
+        document.getElementById('pkg_id').value = '';
         document.getElementById('pkg_name').value = '';
         document.getElementById('pkg_price').value = '';
         document.getElementById('pkg_course_id').value = '';
@@ -298,6 +303,7 @@
     function openAddCoupon() {
         document.getElementById('couponModalTitle').textContent = 'Tambah Kupon';
         document.getElementById('couponForm').action = '{{ route('settings.coupons.store') }}';
+        document.getElementById('cpn_id').value = '';
         document.getElementById('cpn_code').value = '';
         document.getElementById('cpn_type').value = 'fixed';
         document.getElementById('cpn_value').value = '';
