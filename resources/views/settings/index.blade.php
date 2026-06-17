@@ -290,7 +290,8 @@
         const pkg = packagesData[id];
         if (!pkg) return;
         document.getElementById('packageModalTitle').textContent = 'Edit Paket';
-        document.getElementById('packageForm').action = '/settings/packages/update/' + id;
+        document.getElementById('packageForm').action = '{{ route('settings.packages.update') }}';
+        document.getElementById('pkg_id').value = id;
         document.getElementById('pkg_name').value = pkg.name;
         document.getElementById('pkg_price').value = pkg.price;
         document.getElementById('pkg_course_id').value = pkg.course_id;
@@ -317,7 +318,8 @@
         const cpn = couponsData[id];
         if (!cpn) return;
         document.getElementById('couponModalTitle').textContent = 'Edit Kupon';
-        document.getElementById('couponForm').action = '/settings/coupons/update/' + id;
+        document.getElementById('couponForm').action = '{{ route('settings.coupons.update') }}';
+        document.getElementById('cpn_id').value = id;
         document.getElementById('cpn_code').value = cpn.code;
         document.getElementById('cpn_type').value = cpn.discount_type;
         document.getElementById('cpn_value').value = cpn.discount_value;
