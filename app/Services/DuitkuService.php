@@ -45,9 +45,16 @@ class DuitkuService
             'signature' => $this->generateSignature($transaction->invoice_number, $transaction->total_amount),
         ];
 
-        $response = Http::post($this->getBaseUrl() . '/api/v2/merchant/createInvoice', $payload);
+        $url = $this->getBaseUrl() . '/api/v2/merchant/createInvoice';
+        Log::info('Duitku request: ' . $url . ' payload: ' . json_encode($payload));
 
+        $response = Http::timeout(30)->post($url, $payload);
+
+        $statusCode = $response->status();
+        $bodyRaw = $response->body();
         $body = $response->json();
+
+        Log::info('Duitku response status: ' . $statusCode . ' body: ' . $bodyRaw);
 
         if ($response->successful() && isset($body['paymentUrl'])) {
             $transaction->update([
@@ -59,7 +66,12 @@ class DuitkuService
             return ['success' => true, 'paymentUrl' => $body['paymentUrl']];
         }
 
-        $error = $body['Message'] ?? json_encode($body);
+        if ($body === null) {
+            $error = 'Response tidak valid (HTTP ' . $statusCode . '). Body: ' . substr($bodyRaw, 0, 500);
+        } else {
+            $error = $body['Message'] ?? json_encode($body);
+        }
+
         Log::error('Duitku createInvoice failed: ' . $error);
         return ['success' => false, 'error' => $error];
     }
