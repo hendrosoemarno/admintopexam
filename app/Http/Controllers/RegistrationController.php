@@ -30,7 +30,7 @@ class RegistrationController extends Controller
         $validated = $request->validate([
             'package_id' => 'required|exists:packages,id,is_active,1',
             'username' => 'required|string|min:3|max:100',
-            'password' => 'required|string|min:8|regex:/[!@#$%^&*()\-_=+\[\]{}|;:,.<>?\/]/',
+            'password' => ['required', 'string', 'min:8', 'regex:/[^\w\s]/'],
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'email' => 'required|email',
