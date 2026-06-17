@@ -19,7 +19,10 @@ class RegistrationController extends Controller
             return redirect()->route('packages.index')->with('error', 'Paket tidak tersedia.');
         }
 
-        return view('auth.register', compact('package'));
+        $duitku = app(DuitkuService::class);
+        $paymentMethods = $duitku->getPaymentMethods((int) $package->price);
+
+        return view('auth.register', compact('package', 'paymentMethods'));
     }
 
     public function submit(Request $request, DuitkuService $duitku)
@@ -32,6 +35,7 @@ class RegistrationController extends Controller
             'last_name' => 'required|string|max:100',
             'email' => 'required|email',
             'coupon_code' => 'nullable|string|max:50',
+            'payment_method' => 'required|string|max:2',
         ]);
 
         $package = Package::findOrFail($validated['package_id']);
@@ -76,7 +80,7 @@ class RegistrationController extends Controller
         $callbackUrl = route('payment.callback');
 
         try {
-            $result = $duitku->createInvoice($transaction, $returnUrl, $callbackUrl);
+            $result = $duitku->createInvoice($transaction, $returnUrl, $callbackUrl, $validated['payment_method']);
 
             if (!$result['success']) {
                 return back()->with('error', 'Gagal membuat pembayaran: ' . ($result['error'] ?? 'Unknown error'));

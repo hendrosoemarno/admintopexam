@@ -64,6 +64,19 @@
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
 
+            <div class="mb-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Metode Pembayaran</label>
+                <select name="payment_method" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Pilih metode...</option>
+                    @foreach ($paymentMethods as $pm)
+                        <option value="{{ $pm['paymentMethod'] }}" {{ old('payment_method') == $pm['paymentMethod'] ? 'selected' : '' }}>
+                            {{ $pm['paymentName'] }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
             <div class="mb-6">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Kode Kupon (opsional)</label>
                 <input type="text" name="coupon_code" value="{{ old('coupon_code') }}"

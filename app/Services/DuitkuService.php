@@ -32,7 +32,38 @@ class DuitkuService
         return hash_hmac('sha256', implode('', $parts), $this->apiKey);
     }
 
-    public function createInvoice(Transaction $transaction, string $returnUrl, string $callbackUrl): array
+    public function getPaymentMethods(int $amount): array
+    {
+        if (empty($this->merchantCode) || empty($this->apiKey)) {
+            return [];
+        }
+
+        $datetime = date('Y-m-d H:i:s');
+        $stringToSign = $this->merchantCode . $amount . $datetime;
+        $signature = hash_hmac('sha256', $stringToSign, $this->apiKey);
+
+        $url = $this->getBaseUrl() . '/webapi/api/merchant/paymentmethod/getpaymentmethod';
+
+        $response = Http::timeout(30)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post($url, [
+                'merchantcode' => $this->merchantCode,
+                'amount' => $amount,
+                'datetime' => $datetime,
+                'signature' => $signature,
+            ]);
+
+        $body = $response->json();
+
+        if ($response->successful() && isset($body['paymentFee'])) {
+            return $body['paymentFee'];
+        }
+
+        Log::warning('Duitku getPaymentMethods failed: ' . $response->body());
+        return [];
+    }
+
+    public function createInvoice(Transaction $transaction, string $returnUrl, string $callbackUrl, string $paymentMethod = 'VA'): array
     {
         if (empty($this->merchantCode) || empty($this->apiKey)) {
             return ['success' => false, 'error' => 'Merchant Code atau API Key Duitku belum dikonfigurasi. Silakan isi di menu Pengaturan.'];
@@ -46,6 +77,7 @@ class DuitkuService
         $payload = [
             'merchantCode' => $this->merchantCode,
             'paymentAmount' => $paymentAmount,
+            'paymentMethod' => $paymentMethod,
             'merchantOrderId' => $transaction->invoice_number,
             'productDetails' => 'Registrasi: ' . $transaction->package->name,
             'customerVaName' => $transaction->first_name . ' ' . $transaction->last_name,
