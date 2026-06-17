@@ -23,7 +23,7 @@ class DuitkuService
     protected function getBaseUrl(): string
     {
         return $this->isSandbox
-            ? 'https://api-sandbox.duitku.com'
+            ? 'https://sandbox.duitku.com'
             : 'https://api.duitku.com';
     }
 
