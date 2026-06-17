@@ -40,11 +40,11 @@ Route::prefix('payment')->name('payment.')->group(function () {
 Route::middleware('moodle.auth')->prefix('settings')->name('settings.')->group(function () {
     Route::get('/', [App\Http\Controllers\SettingsController::class, 'index'])->name('index');
     Route::post('/packages', [App\Http\Controllers\SettingsController::class, 'storePackage'])->name('packages.store');
-    Route::post('/packages/update/{package}', [App\Http\Controllers\SettingsController::class, 'updatePackage'])->name('packages.update');
-    Route::post('/packages/delete/{package}', [App\Http\Controllers\SettingsController::class, 'destroyPackage'])->name('packages.destroy');
+    Route::post('/packages/update', [App\Http\Controllers\SettingsController::class, 'updatePackage'])->name('packages.update');
+    Route::post('/packages/delete', [App\Http\Controllers\SettingsController::class, 'destroyPackage'])->name('packages.destroy');
     Route::post('/coupons', [App\Http\Controllers\SettingsController::class, 'storeCoupon'])->name('coupons.store');
-    Route::post('/coupons/update/{coupon}', [App\Http\Controllers\SettingsController::class, 'updateCoupon'])->name('coupons.update');
-    Route::post('/coupons/delete/{coupon}', [App\Http\Controllers\SettingsController::class, 'destroyCoupon'])->name('coupons.destroy');
+    Route::post('/coupons/update', [App\Http\Controllers\SettingsController::class, 'updateCoupon'])->name('coupons.update');
+    Route::post('/coupons/delete', [App\Http\Controllers\SettingsController::class, 'destroyCoupon'])->name('coupons.destroy');
     Route::post('/save', [App\Http\Controllers\SettingsController::class, 'saveSettings'])->name('save');
 });
 

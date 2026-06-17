@@ -36,8 +36,19 @@ class SettingsController extends Controller
         return redirect()->route('settings.index')->with('success', 'Paket berhasil ditambahkan.');
     }
 
-    public function updatePackage(Request $request, Package $package)
+    public function updatePackage(Request $request)
     {
+        $request->validate([
+            'package_id' => 'required|exists:packages,id',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'course_id' => 'required|integer|min:1',
+            'course_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $package = Package::findOrFail($request->package_id);
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
@@ -53,9 +64,15 @@ class SettingsController extends Controller
         return redirect()->route('settings.index')->with('success', 'Paket berhasil diperbarui.');
     }
 
-    public function destroyPackage(Package $package)
+    public function destroyPackage(Request $request)
     {
+        $request->validate([
+            'package_id' => 'required|exists:packages,id',
+        ]);
+
+        $package = Package::findOrFail($request->package_id);
         $package->delete();
+
         return redirect()->route('settings.index')->with('success', 'Paket berhasil dihapus.');
     }
 
@@ -76,8 +93,19 @@ class SettingsController extends Controller
         return redirect()->route('settings.index')->with('success', 'Kupon berhasil ditambahkan.');
     }
 
-    public function updateCoupon(Request $request, Coupon $coupon)
+    public function updateCoupon(Request $request)
     {
+        $request->validate([
+            'coupon_id' => 'required|exists:coupons,id',
+            'code' => 'required|string|max:50',
+            'discount_type' => 'required|in:fixed,percentage',
+            'discount_value' => 'required|numeric|min:0',
+            'max_uses' => 'nullable|integer|min:1',
+            'expires_at' => 'nullable|date',
+        ]);
+
+        $coupon = Coupon::findOrFail($request->coupon_id);
+
         $validated = $request->validate([
             'code' => 'required|string|max:50|unique:coupons,code,' . $coupon->id,
             'discount_type' => 'required|in:fixed,percentage',
@@ -93,9 +121,15 @@ class SettingsController extends Controller
         return redirect()->route('settings.index')->with('success', 'Kupon berhasil diperbarui.');
     }
 
-    public function destroyCoupon(Coupon $coupon)
+    public function destroyCoupon(Request $request)
     {
+        $request->validate([
+            'coupon_id' => 'required|exists:coupons,id',
+        ]);
+
+        $coupon = Coupon::findOrFail($request->coupon_id);
         $coupon->delete();
+
         return redirect()->route('settings.index')->with('success', 'Kupon berhasil dihapus.');
     }
 
