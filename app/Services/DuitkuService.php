@@ -38,7 +38,7 @@ class DuitkuService
             return ['success' => false, 'error' => 'Merchant Code atau API Key Duitku belum dikonfigurasi. Silakan isi di menu Pengaturan.'];
         }
 
-        $paymentAmount = (int) ($transaction->total_amount * 100);
+        $paymentAmount = (int) $transaction->total_amount;
 
         $stringToSign = $this->merchantCode . $transaction->invoice_number . $paymentAmount;
         $signature = hash_hmac('sha256', $stringToSign, $this->apiKey);
@@ -46,7 +46,6 @@ class DuitkuService
         $payload = [
             'merchantCode' => $this->merchantCode,
             'paymentAmount' => $paymentAmount,
-            'paymentMethod' => 'VA',
             'merchantOrderId' => $transaction->invoice_number,
             'productDetails' => 'Registrasi: ' . $transaction->package->name,
             'customerVaName' => $transaction->first_name . ' ' . $transaction->last_name,
