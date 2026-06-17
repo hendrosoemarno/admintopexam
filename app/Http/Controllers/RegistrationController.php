@@ -75,12 +75,16 @@ class RegistrationController extends Controller
         $returnUrl = route('payment.finish', ['invoice' => $invoiceNumber]);
         $callbackUrl = route('payment.callback');
 
-        $result = $duitku->createInvoice($transaction, $returnUrl, $callbackUrl);
+        try {
+            $result = $duitku->createInvoice($transaction, $returnUrl, $callbackUrl);
 
-        if (!$result['success']) {
-            return back()->with('error', 'Gagal membuat pembayaran: ' . ($result['error'] ?? 'Unknown error'));
+            if (!$result['success']) {
+                return back()->with('error', 'Gagal membuat pembayaran: ' . ($result['error'] ?? 'Unknown error'));
+            }
+
+            return redirect($result['paymentUrl']);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-
-        return redirect($result['paymentUrl']);
     }
 }

@@ -29,6 +29,10 @@ class DuitkuService
 
     public function createInvoice(Transaction $transaction, string $returnUrl, string $callbackUrl): array
     {
+        if (empty($this->merchantCode) || empty($this->apiKey)) {
+            return ['success' => false, 'error' => 'Merchant Code atau API Key Duitku belum dikonfigurasi. Silakan isi di menu Pengaturan.'];
+        }
+
         $payload = [
             'merchantCode' => $this->merchantCode,
             'paymentAmount' => (int) ($transaction->total_amount * 100),
