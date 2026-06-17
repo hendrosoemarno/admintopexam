@@ -24,7 +24,12 @@ class DuitkuService
     {
         return $this->isSandbox
             ? 'https://sandbox.duitku.com'
-            : 'https://api.duitku.com';
+            : 'https://passport.duitku.com';
+    }
+
+    protected function signature(string ...$parts): string
+    {
+        return hash_hmac('sha256', implode('', $parts), $this->apiKey);
     }
 
     public function createInvoice(Transaction $transaction, string $returnUrl, string $callbackUrl): array
@@ -33,22 +38,30 @@ class DuitkuService
             return ['success' => false, 'error' => 'Merchant Code atau API Key Duitku belum dikonfigurasi. Silakan isi di menu Pengaturan.'];
         }
 
+        $paymentAmount = (int) ($transaction->total_amount * 100);
+
+        $stringToSign = $this->merchantCode . $transaction->invoice_number . $paymentAmount;
+        $signature = hash_hmac('sha256', $stringToSign, $this->apiKey);
+
         $payload = [
             'merchantCode' => $this->merchantCode,
-            'paymentAmount' => (int) ($transaction->total_amount * 100),
+            'paymentAmount' => $paymentAmount,
+            'paymentMethod' => 'VA',
             'merchantOrderId' => $transaction->invoice_number,
             'productDetails' => 'Registrasi: ' . $transaction->package->name,
             'customerVaName' => $transaction->first_name . ' ' . $transaction->last_name,
             'email' => $transaction->email,
             'returnUrl' => $returnUrl,
             'callbackUrl' => $callbackUrl,
-            'signature' => $this->generateSignature($transaction->invoice_number, $transaction->total_amount),
+            'signature' => $signature,
         ];
 
-        $url = $this->getBaseUrl() . '/api/v2/merchant/createInvoice';
+        $url = $this->getBaseUrl() . '/webapi/api/merchant/v2/inquiry';
         Log::info('Duitku request: ' . $url . ' payload: ' . json_encode($payload));
 
-        $response = Http::timeout(30)->post($url, $payload);
+        $response = Http::timeout(30)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post($url, $payload);
 
         $statusCode = $response->status();
         $bodyRaw = $response->body();
@@ -69,7 +82,7 @@ class DuitkuService
         if ($body === null) {
             $error = 'Response tidak valid (HTTP ' . $statusCode . '). Body: ' . substr($bodyRaw, 0, 500);
         } else {
-            $error = $body['Message'] ?? json_encode($body);
+            $error = $body['statusMessage'] ?? $body['Message'] ?? json_encode($body);
         }
 
         Log::error('Duitku createInvoice failed: ' . $error);
@@ -83,7 +96,8 @@ class DuitkuService
         $merchantOrderId = $data['merchantOrderId'] ?? '';
         $reference = $data['reference'] ?? '';
 
-        $signature = md5($merchantCode . $merchantOrderId . $amount . $this->apiKey);
+        $stringToSign = $merchantCode . $amount . $merchantOrderId;
+        $signature = hash_hmac('sha256', $stringToSign, $this->apiKey);
 
         if ($signature !== ($data['signature'] ?? '')) {
             Log::warning('Duitku callback invalid signature for order: ' . $merchantOrderId);
@@ -115,10 +129,5 @@ class DuitkuService
         }
 
         return ['success' => false, 'error' => 'Payment not successful. Result code: ' . $resultCode];
-    }
-
-    protected function generateSignature(string $merchantOrderId, float $amount): string
-    {
-        return md5($this->merchantCode . $merchantOrderId . (int) ($amount * 100) . $this->apiKey);
     }
 }
