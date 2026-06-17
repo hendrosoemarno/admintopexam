@@ -6,10 +6,6 @@
 <div x-data="{ tab: 'packages' }">
     <h2 class="text-2xl font-bold text-gray-800 mb-4">Pengaturan</h2>
 
-    @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{{ session('success') }}</div>
-    @endif
-
     <!-- Tab Navigation -->
     <div class="flex space-x-1 mb-6 bg-gray-200 rounded-lg p-1">
         <button @click="tab = 'packages'"
