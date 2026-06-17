@@ -27,10 +27,6 @@ class MoodleApiService
                 'lastname' => $lastname,
                 'email' => $email,
                 'auth' => 'manual',
-                'lang' => 'id',
-                'timezone' => 'Asia/Jakarta',
-                'city' => 'Jakarta',
-                'country' => 'ID',
             ]
         ];
 
