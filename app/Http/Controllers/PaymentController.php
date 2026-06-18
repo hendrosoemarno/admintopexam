@@ -23,8 +23,7 @@ class PaymentController extends Controller
         $transaction = $result['transaction'];
 
         $students = $transaction->students_data
-            ? json_decode($transaction->students_data, true)
-            : [[
+            ?: [[
                 'username' => $transaction->username,
                 'password' => $transaction->password,
                 'first_name' => $transaction->first_name,
