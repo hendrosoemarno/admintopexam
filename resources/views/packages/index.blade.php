@@ -11,8 +11,8 @@
         .glow-blue { box-shadow: 0 0 30px rgba(59,130,246,.25); }
         .glow-orange { box-shadow: 0 0 30px rgba(251,146,60,.2); }
         .glass { background: rgba(255,255,255,.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.06); }
-        .glass-card { background: rgba(255,255,255,.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.08); transition: all .3s ease; }
-        .glass-card:hover { background: rgba(255,255,255,.08); border-color: rgba(59,130,246,.3); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+        .glass-card { background: rgba(11,14,26,.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.1); transition: all .3s ease; }
+        .glass-card:hover { background: rgba(11,14,26,.9); border-color: rgba(59,130,246,.4); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
         .gradient-text { background: linear-gradient(135deg,#60a5fa,#38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .gradient-text-orange { background: linear-gradient(135deg,#fb923c,#f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .bg-grid { background-image: radial-gradient(rgba(255,255,255,.04) 1px,transparent 0); background-size: 40px 40px; }
