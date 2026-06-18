@@ -6,175 +6,231 @@
     <title>Top Exam — Try Out TKA SD & SMP</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        body { background: #0b0e1a; }
+        .glow-blue { box-shadow: 0 0 30px rgba(59,130,246,.25); }
+        .glow-orange { box-shadow: 0 0 30px rgba(251,146,60,.2); }
+        .glass { background: rgba(255,255,255,.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.06); }
+        .glass-card { background: rgba(255,255,255,.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.08); transition: all .3s ease; }
+        .glass-card:hover { background: rgba(255,255,255,.08); border-color: rgba(59,130,246,.3); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+        .gradient-text { background: linear-gradient(135deg,#60a5fa,#38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradient-text-orange { background: linear-gradient(135deg,#fb923c,#f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-grid { background-image: radial-gradient(rgba(255,255,255,.04) 1px,transparent 0); background-size: 40px 40px; }
+        .hero-glow { position: relative; overflow: hidden; }
+        .hero-glow::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 30% 20%,rgba(59,130,246,.12) 0%,transparent 50%), radial-gradient(ellipse at 70% 80%,rgba(251,146,60,.08) 0%,transparent 50%); pointer-events: none; }
+        .btn-primary { background: linear-gradient(135deg,#2563eb,#1d4ed8); transition: all .3s ease; }
+        .btn-primary:hover { background: linear-gradient(135deg,#3b82f6,#2563eb); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,99,235,.35); }
+        .btn-accent { background: linear-gradient(135deg,#ea580c,#c2410c); transition: all .3s ease; }
+        .btn-accent:hover { background: linear-gradient(135deg,#f97316,#ea580c); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(234,88,12,.35); }
+        .badge { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+        .feature-icon { width: 48px; height: 48px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.15); }
+        .divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent); }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body>
 
     <!-- NAVBAR -->
-    <nav class="bg-white shadow-sm border-b border-gray-200">
+    <nav class="fixed top-0 left-0 right-0 z-50 glass" x-data="{ scrolled: false }" x-init="window.addEventListener('scroll',()=>scrolled=window.scrollY>20)">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <span class="text-2xl font-extrabold text-blue-700">Top <span class="text-orange-500">Exam</span></span>
-            </div>
-            <div class="flex items-center gap-3">
-                <a href="{{ route('dashboard') }}" class="text-sm text-gray-600 hover:text-blue-700">Dashboard</a>
-                <a href="{{ route('moodle.login') }}" class="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Login</a>
+            <span class="text-xl font-extrabold tracking-tight">
+                <span class="text-white">top</span><span class="text-orange-400">exam</span>
+                <span class="text-xs text-gray-500 ml-1 font-normal">.id</span>
+            </span>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('dashboard') }}" class="text-sm text-gray-400 hover:text-white transition">Dashboard</a>
+                <a href="{{ route('moodle.login') }}" class="btn-primary text-white text-sm font-semibold px-5 py-2 rounded-full">Login</a>
             </div>
         </div>
     </nav>
 
-    <!-- HERO -->
-    <header class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
-        <div class="max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
-            <p class="text-orange-300 font-semibold text-sm md:text-base tracking-widest uppercase mb-4">🎉 Launching 10.10.25</p>
-            <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-6">
-                Aplikasi Web Try Out<br>
-                <span class="text-orange-300">TKA SD & SMP</span>
-            </h1>
-            <p class="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto mb-8">
-                dari <strong>Top Exam</strong> — bantu Ananda belajar lebih terarah, terukur, dan percaya diri! 💪
-            </p>
-            <div class="flex flex-wrap gap-4 justify-center">
-                <a href="#paket" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
-                    Daftar Sekarang
-                </a>
+    <!-- HERO + PAKET -->
+    <section class="hero-glow min-h-screen flex items-center pt-16">
+        <div class="max-w-6xl mx-auto px-4 py-16 md:py-24 w-full">
+            <div class="text-center mb-16">
+                <span class="badge text-xs font-semibold px-4 py-1.5 rounded-full inline-block mb-6">🎉 Launching 10.10.25</span>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
+                    Try Out <span class="gradient-text-orange">TKA</span><br>
+                    <span class="text-gray-300">SD & SMP</span>
+                </h1>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    Platform latihan <strong class="text-white">Tes Kompetensi Akademik</strong> paling lengkap dan modern. 
+                    Ukur kemampuan, dapatkan rapor otomatis, dan raih prestasi terbaik.
+                </p>
+                <div class="flex flex-wrap gap-3 justify-center mt-8">
+                    <a href="#paket" class="btn-accent text-white font-bold px-8 py-3 rounded-full">Daftar Sekarang</a>
+                    <a href="#tentang" class="glass text-gray-300 font-medium px-8 py-3 rounded-full hover:text-white transition">Pelajari Lebih Lanjut</a>
+                </div>
+            </div>
+
+            <!-- PAKET KURSUS -->
+            <div id="paket">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white">Pilih Paket Kursus</h2>
+                    <p class="text-gray-500 mt-1">Daftar dan lakukan pembayaran untuk memulai pembelajaran</p>
+                </div>
+
+                @if (session('success'))
+                    <div class="max-w-lg mx-auto mb-6 bg-green-900/30 border border-green-700/40 text-green-300 px-4 py-3 rounded-xl text-center text-sm">{{ session('success') }}</div>
+                @endif
+                @if (session('error'))
+                    <div class="max-w-lg mx-auto mb-6 bg-red-900/30 border border-red-700/40 text-red-300 px-4 py-3 rounded-xl text-center text-sm">{{ session('error') }}</div>
+                @endif
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse ($packages as $i => $package)
+                        <div class="glass-card rounded-2xl overflow-hidden glow-{{ $i % 2 === 0 ? 'blue' : 'orange' }}">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-3">
+                                    <h3 class="text-lg font-bold text-white">{{ $package->name }}</h3>
+                                    @if ($package->max_students > 1)
+                                        <span class="text-xs bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2 py-0.5 rounded-full">Group</span>
+                                    @else
+                                        <span class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">Individual</span>
+                                    @endif
+                                </div>
+                                @if ($package->max_students > 1)
+                                    <p class="text-orange-400/70 text-xs mb-3">Max {{ $package->max_students }} siswa</p>
+                                @endif
+                                @if ($package->description)
+                                    <p class="text-gray-400 text-sm mb-4">{{ $package->description }}</p>
+                                @endif
+                                <p class="text-3xl font-bold gradient-text mb-6">Rp {{ number_format($package->price, 0, ',', '.') }}</p>
+                                @if ($package->max_students > 1)
+                                    <a href="{{ route('register.group.form', $package->id) }}"
+                                       class="block w-full text-center bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-4 rounded-xl transition">
+                                        Daftar Group
+                                    </a>
+                                @else
+                                    <a href="{{ route('register.form', $package->id) }}"
+                                       class="block w-full text-center btn-primary text-white font-semibold py-2.5 px-4 rounded-xl transition">
+                                        Daftar & Bayar
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-span-full text-center py-12 text-gray-500">Belum ada paket tersedia. Silakan hubungi administrator.</div>
+                    @endforelse
+                </div>
             </div>
         </div>
-    </header>
+    </section>
 
     <!-- TENTANG -->
-    <section class="max-w-6xl mx-auto px-4 py-16">
-        <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3">Apa itu TKA?</h2>
-            <p class="text-gray-600 max-w-3xl mx-auto text-lg">
-                <strong>Tes Kompetensi Akademik (TKA)</strong> adalah sarana penting untuk mengukur kemampuan akademik sesuai standar nasional.
-                Dengan berlatih secara rutin, InsyaAllah Ananda bisa mengenali keunggulan dan memperbaiki area yang perlu ditingkatkan. 🌱
-            </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
-                <div class="text-4xl mb-4">📘</div>
-                <h3 class="font-bold text-gray-800 mb-2">Platform Terlengkap & Modern</h3>
-                <p class="text-gray-600 text-sm">Latihan Tes Kompetensi Akademik paling lengkap dan modern, dirancang sesuai kisi-kisi resmi pemerintah.</p>
+    <section id="tentang" class="py-20 bg-grid">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-14">
+                <span class="badge text-xs font-semibold px-4 py-1.5 rounded-full inline-block mb-4">Tentang</span>
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Apa itu <span class="gradient-text-orange">TKA</span>?</h2>
+                <p class="text-gray-400 max-w-3xl mx-auto mt-3 text-lg">
+                    <strong class="text-white">Tes Kompetensi Akademik</strong> adalah sarana penting untuk mengukur kemampuan akademik sesuai standar nasional.
+                    Dengan berlatih secara rutin, Ananda bisa mengenali keunggulan dan memperbaiki area yang perlu ditingkatkan.
+                </p>
             </div>
-            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
-                <div class="text-4xl mb-4">📖</div>
-                <h3 class="font-bold text-gray-800 mb-2">Kisi-Kisi Resmi</h3>
-                <p class="text-gray-600 text-sm">Soal-soal disusun berdasarkan kisi-kisi resmi pemerintah untuk hasil belajar yang optimal.</p>
-            </div>
-            <div class="bg-white rounded-2xl shadow-md p-6 text-center">
-                <div class="text-4xl mb-4">📊</div>
-                <h3 class="font-bold text-gray-800 mb-2">Rapor Kompetensi Otomatis</h3>
-                <p class="text-gray-600 text-sm">Setiap sesi try out dilengkapi rapor kompetensi otomatis untuk melihat hasil belajar per indikator.</p>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="feature-icon mx-auto mb-4">📘</div>
+                    <h3 class="font-bold text-white mb-2">Platform Terlengkap & Modern</h3>
+                    <p class="text-gray-400 text-sm">Latihan TKA paling lengkap dan modern, sesuai kisi-kisi resmi pemerintah.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="feature-icon mx-auto mb-4">📖</div>
+                    <h3 class="font-bold text-white mb-2">Kisi-Kisi Resmi</h3>
+                    <p class="text-gray-400 text-sm">Soal disusun berdasarkan kisi-kisi resmi pemerintah untuk hasil optimal.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6 text-center">
+                    <div class="feature-icon mx-auto mb-4">📊</div>
+                    <h3 class="font-bold text-white mb-2">Rapor Kompetensi Otomatis</h3>
+                    <p class="text-gray-400 text-sm">Rapor otomatis di setiap try out untuk lihat hasil per indikator.</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- FITUR -->
-    <section class="bg-white py-16">
+    <section class="py-20">
         <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-12">Fitur Unggulan</h2>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-blue-50 rounded-xl p-5">
-                    <span class="text-2xl">📚</span>
-                    <h4 class="font-bold text-gray-800 mt-2 mb-1">Try Out TKA SD & SMP</h4>
-                    <p class="text-gray-600 text-sm">Berbasis kompetensi sesuai jenjang pendidikan.</p>
+            <div class="text-center mb-14">
+                <span class="badge text-xs font-semibold px-4 py-1.5 rounded-full inline-block mb-4">Fitur</span>
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Fitur Unggulan</h2>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-2xl flex-shrink-0">📚</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Try Out TKA SD & SMP</h4>
+                        <p class="text-gray-400 text-xs mt-1">Berbasis kompetensi sesuai jenjang.</p>
+                    </div>
                 </div>
-                <div class="bg-blue-50 rounded-xl p-5">
-                    <span class="text-2xl">📊</span>
-                    <h4 class="font-bold text-gray-800 mt-2 mb-1">Rapor Hasil Belajar</h4>
-                    <p class="text-gray-600 text-sm">Per indikator untuk melihat area yang perlu ditingkatkan.</p>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-2xl flex-shrink-0">📊</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Rapor Hasil Belajar</h4>
+                        <p class="text-gray-400 text-xs mt-1">Per indikator, lihat area perlu ditingkatkan.</p>
+                    </div>
                 </div>
-                <div class="bg-blue-50 rounded-xl p-5">
-                    <span class="text-2xl">⭐</span>
-                    <h4 class="font-bold text-gray-800 mt-2 mb-1">Analisis Kekuatan</h4>
-                    <p class="text-gray-600 text-sm">Identifikasi area yang sudah kuat dan perlu ditingkatkan.</p>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-2xl flex-shrink-0">⭐</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Analisis Kekuatan</h4>
+                        <p class="text-gray-400 text-xs mt-1">Identifikasi area kuat & perlu perbaikan.</p>
+                    </div>
                 </div>
-                <div class="bg-blue-50 rounded-xl p-5">
-                    <span class="text-2xl">💡</span>
-                    <h4 class="font-bold text-gray-800 mt-2 mb-1">Tampilan Interaktif</h4>
-                    <p class="text-gray-600 text-sm">Mudah digunakan, pengalaman try out yang realistis dan menyenangkan.</p>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-2xl flex-shrink-0">💡</span>
+                    <div>
+                        <h4 class="font-bold text-white text-sm">Tampilan Interaktif</h4>
+                        <p class="text-gray-400 text-xs mt-1">Mudah digunakan, realistis & menyenangkan.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- MANFAAT -->
-    <section class="max-w-6xl mx-auto px-4 py-16">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-3">Dengan Aplikasi Ini, Ayah Bunda dan Ananda Bisa:</h2>
-        <div class="grid md:grid-cols-3 gap-6 mt-10">
-            <div class="flex items-start gap-4 bg-green-50 rounded-xl p-5">
-                <span class="text-green-600 text-2xl flex-shrink-0">✅</span>
-                <p class="text-gray-700 font-medium">Mengetahui kemampuan akademik sejak dini</p>
+    <section class="py-20 bg-grid">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="text-center mb-14">
+                <span class="badge text-xs font-semibold px-4 py-1.5 rounded-full inline-block mb-4">Manfaat</span>
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Ayah Bunda & Ananda Bisa:</h2>
             </div>
-            <div class="flex items-start gap-4 bg-green-50 rounded-xl p-5">
-                <span class="text-green-600 text-2xl flex-shrink-0">✅</span>
-                <p class="text-gray-700 font-medium">Melatih pemahaman sesuai standar nasional</p>
+            <div class="grid md:grid-cols-3 gap-5">
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-green-400 text-xl flex-shrink-0 mt-0.5">✓</span>
+                    <p class="text-gray-300 font-medium">Mengetahui kemampuan akademik sejak dini</p>
+                </div>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-green-400 text-xl flex-shrink-0 mt-0.5">✓</span>
+                    <p class="text-gray-300 font-medium">Melatih pemahaman sesuai standar nasional</p>
+                </div>
+                <div class="glass-card rounded-xl p-5 flex items-start gap-4">
+                    <span class="text-green-400 text-xl flex-shrink-0 mt-0.5">✓</span>
+                    <p class="text-gray-300 font-medium">Belajar mandiri dengan pengalaman try out realistis</p>
+                </div>
             </div>
-            <div class="flex items-start gap-4 bg-green-50 rounded-xl p-5">
-                <span class="text-green-600 text-2xl flex-shrink-0">✅</span>
-                <p class="text-gray-700 font-medium">Belajar mandiri dengan pengalaman try out yang realistis dan menyenangkan</p>
+            <div class="text-center mt-10">
+                <p class="text-gray-500">🚀 Ayo mulai perjalanan sukses TKA Tahun Ajaran 2025/2026 dari sekarang!</p>
             </div>
         </div>
-        <p class="text-center text-gray-500 mt-8 text-sm">
-            🚀 Ayo mulai perjalanan sukses TKA Tahun Ajaran 2025/2026 dari sekarang!
-        </p>
     </section>
 
-    <!-- PAKET KURSUS -->
-    <section id="paket" class="bg-gray-100 py-16">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-2">Pilih Paket Kursus</h2>
-            <p class="text-gray-600 text-center mb-8">Daftar dan lakukan pembayaran untuk memulai pembelajaran</p>
-
-            @if (session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{{ session('success') }}</div>
-            @endif
-
-            @if (session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{{ session('error') }}</div>
-            @endif
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @forelse ($packages as $package)
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform transition hover:scale-105 hover:shadow-xl">
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $package->name }}</h3>
-                            @if ($package->max_students > 1)
-                                <p class="text-orange-600 text-sm font-semibold mb-1">Group &bull; Max {{ $package->max_students }} siswa</p>
-                            @endif
-                            @if ($package->description)
-                                <p class="text-gray-600 text-sm mb-4">{{ $package->description }}</p>
-                            @endif
-                            <p class="text-3xl font-bold text-blue-600 mb-4">Rp {{ number_format($package->price, 0, ',', '.') }}</p>
-                            @if ($package->max_students > 1)
-                                <a href="{{ route('register.group.form', $package->id) }}"
-                                   class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                                    Daftar Group
-                                </a>
-                            @else
-                                <a href="{{ route('register.form', $package->id) }}"
-                                   class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                                    Daftar & Bayar
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-span-full text-center py-12 text-gray-500">
-                        Belum ada paket tersedia. Silakan hubungi administrator.
-                    </div>
-                @endforelse
+    <!-- CTA -->
+    <section class="py-20">
+        <div class="max-w-3xl mx-auto px-4 text-center">
+            <div class="glass-card rounded-3xl p-10">
+                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Siap Mulai Belajar?</h2>
+                <p class="text-gray-400 mb-8">Daftar sekarang dan dapatkan akses ke semua try out TKA SD & SMP.</p>
+                <a href="#paket" class="btn-accent text-white font-bold px-10 py-3.5 rounded-full inline-block">Daftar Sekarang</a>
             </div>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="bg-gray-800 text-gray-300 py-8">
+    <footer class="border-t border-gray-800 py-10">
         <div class="max-w-6xl mx-auto px-4 text-center">
-            <p class="font-bold text-white">Top Exam</p>
-            <p class="text-sm mt-1">Platform Try Out TKA SD & SMP — Persiapan Sukses TKA Tahun Ajaran 2025/2026</p>
-            <p class="text-xs mt-4">&copy; {{ date('Y') }} Top Exam. All rights reserved.</p>
+            <p class="text-xl font-extrabold tracking-tight"><span class="text-white">top</span><span class="text-orange-400">exam</span></p>
+            <p class="text-gray-500 text-sm mt-2">Platform Try Out TKA SD & SMP — Persiapan Sukses TA 2025/2026</p>
+            <p class="text-gray-600 text-xs mt-6">&copy; {{ date('Y') }} Top Exam. All rights reserved.</p>
         </div>
     </footer>
 
