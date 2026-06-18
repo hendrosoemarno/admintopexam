@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top Exam — Try Out TKA SD & SMP</title>
+    <title>Top Exam — Try Out TKA SD, SMP & SMA</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
@@ -127,7 +127,7 @@
             <div class="text-center mb-16">
                 <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-4" style="color:var(--text)">
                     Try Out <span class="gradient-text-orange">TKA</span><br>
-                    <span style="color:var(--text-dim)">SD & SMP</span>
+                    <span style="color:var(--text-dim)">SD, SMP & SMA</span>
                 </h1>
                 <p style="color:var(--text-dim)" class="text-lg max-w-2xl mx-auto">
                     Platform latihan <strong style="color:var(--text)">Tes Kompetensi Akademik</strong> paling lengkap dan modern. 
@@ -235,7 +235,7 @@
                 <div class="glass-card rounded-xl p-5 flex items-start gap-4">
                     <span class="text-2xl flex-shrink-0">📚</span>
                     <div>
-                        <h4 class="font-bold text-sm" style="color:var(--text)">Try Out TKA SD & SMP</h4>
+                        <h4 class="font-bold text-sm" style="color:var(--text)">Try Out TKA SD, SMP & SMA</h4>
                         <p style="color:var(--text-dim)" class="text-xs mt-1">Berbasis kompetensi sesuai jenjang.</p>
                     </div>
                 </div>
@@ -296,7 +296,7 @@
         <div class="max-w-3xl mx-auto px-4 text-center">
             <div class="glass-card rounded-3xl p-10">
                 <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color:var(--text)">Siap Mulai Belajar?</h2>
-                <p style="color:var(--text-dim)" class="mb-8">Daftar sekarang dan dapatkan akses ke semua try out TKA SD & SMP.</p>
+                <p style="color:var(--text-dim)" class="mb-8">Daftar sekarang dan dapatkan akses ke semua try out TKA SD, SMP & SMA.</p>
                 <a href="#paket" class="btn-accent text-white font-bold px-10 py-3.5 rounded-full inline-block">Daftar Sekarang</a>
             </div>
         </div>
@@ -308,7 +308,7 @@
             <p class="text-xl font-extrabold tracking-tight">
                 <span style="color:var(--text)">top</span><span class="gradient-text-orange">exam</span>
             </p>
-            <p style="color:var(--text-dim)" class="text-sm mt-2">Platform Try Out TKA SD & SMP — Persiapan Sukses TA 2025/2026</p>
+            <p style="color:var(--text-dim)" class="text-sm mt-2">Platform Try Out TKA SD, SMP & SMA — Persiapan Sukses TA 2025/2026</p>
             <p style="color:var(--text-muted)" class="text-xs mt-6">&copy; {{ date('Y') }} Top Exam. All rights reserved.</p>
         </div>
     </footer>
