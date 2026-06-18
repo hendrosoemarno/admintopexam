@@ -65,8 +65,8 @@
             --btn-group: #f97316;
             --nav-bg: rgba(255,255,255,.85);
             --nav-border: #e2e8f0;
-            --footer-bg: #1e293b;
-            --footer-border: #334155;
+            --footer-bg: #f1f5f9;
+            --footer-border: #e2e8f0;
             --feature-icon-bg: #e0e7ff;
             --feature-icon-border: #c7d2fe;
             --cta-card-bg: #ffffff;
