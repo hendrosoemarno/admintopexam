@@ -8,6 +8,7 @@ class Transaction extends Model
 {
     protected $fillable = [
         'package_id', 'coupon_id', 'username', 'password', 'first_name', 'last_name', 'email',
+        'students_data', 'student_count',
         'invoice_number', 'amount', 'discount_amount', 'total_amount', 'status',
         'payment_code', 'payment_url', 'moodle_user_id', 'paid_at'
     ];
@@ -20,6 +21,8 @@ class Transaction extends Model
             'total_amount' => 'decimal:2',
             'paid_at' => 'datetime',
             'password' => 'encrypted',
+            'students_data' => 'json',
+            'student_count' => 'integer',
         ];
     }
 

@@ -22,26 +22,44 @@ class PaymentController extends Controller
 
         $transaction = $result['transaction'];
 
-        $moodleUserId = $moodle->createUser(
-            $transaction->username,
-            $transaction->password,
-            $transaction->first_name,
-            $transaction->last_name,
-            $transaction->email
-        );
+        $students = $transaction->students_data
+            ? json_decode($transaction->students_data, true)
+            : [[
+                'username' => $transaction->username,
+                'password' => $transaction->password,
+                'first_name' => $transaction->first_name,
+                'last_name' => $transaction->last_name,
+                'email' => $transaction->email,
+            ]];
 
-        if (!$moodleUserId) {
-            Log::error('Failed to create Moodle user for transaction: ' . $transaction->invoice_number);
-            return response('Failed to create Moodle user', 500);
+        $firstMoodleId = null;
+
+        foreach ($students as $student) {
+            $moodleUserId = $moodle->createUser(
+                $student['username'],
+                $student['password'],
+                $student['first_name'],
+                $student['last_name'],
+                $student['email']
+            );
+
+            if (!$moodleUserId) {
+                Log::error('Failed to create Moodle user for transaction: ' . $transaction->invoice_number . ' user: ' . $student['username']);
+                return response('Failed to create Moodle user', 500);
+            }
+
+            if ($firstMoodleId === null) {
+                $firstMoodleId = $moodleUserId;
+            }
+
+            $enrolled = $moodle->enrolUser($transaction->package->course_id, $moodleUserId);
+
+            if (!$enrolled) {
+                Log::error('Failed to enrol user ' . $moodleUserId . ' in course ' . $transaction->package->course_id);
+            }
         }
 
-        $transaction->update(['moodle_user_id' => $moodleUserId]);
-
-        $enrolled = $moodle->enrolUser($transaction->package->course_id, $moodleUserId);
-
-        if (!$enrolled) {
-            Log::error('Failed to enroll Moodle user for transaction: ' . $transaction->invoice_number);
-        }
+        $transaction->update(['moodle_user_id' => $firstMoodleId]);
 
         return response('OK', 200);
     }

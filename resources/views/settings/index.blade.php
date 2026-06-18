@@ -86,6 +86,11 @@
                                class="w-full border border-gray-300 rounded-lg px-3 py-2">
                     </div>
                     <div>
+                        <label class="block text-sm font-semibold mb-1">Min Siswa</label>
+                        <input type="number" name="min_students" id="pkg_min_students" min="1" value="1" required
+                               class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                    <div>
                         <label class="block text-sm font-semibold mb-1">Course ID (Moodle)</label>
                         <input type="number" name="course_id" id="pkg_course_id" required
                                class="w-full border border-gray-300 rounded-lg px-3 py-2">
@@ -275,6 +280,7 @@
         document.getElementById('pkg_id').value = '';
         document.getElementById('pkg_name').value = '';
         document.getElementById('pkg_price').value = '';
+        document.getElementById('pkg_min_students').value = 1;
         document.getElementById('pkg_course_id').value = '';
         document.getElementById('pkg_course_name').value = '';
         document.getElementById('pkg_description').value = '';
@@ -290,6 +296,7 @@
         document.getElementById('pkg_id').value = id;
         document.getElementById('pkg_name').value = pkg.name;
         document.getElementById('pkg_price').value = pkg.price;
+        document.getElementById('pkg_min_students').value = pkg.min_students || 1;
         document.getElementById('pkg_course_id').value = pkg.course_id;
         document.getElementById('pkg_course_name').value = pkg.course_name || '';
         document.getElementById('pkg_description').value = pkg.description || '';

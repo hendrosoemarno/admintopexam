@@ -29,7 +29,9 @@ Route::prefix('packages')->name('packages.')->group(function () {
 
 Route::prefix('register')->name('register.')->group(function () {
     Route::get('/{package}', [App\Http\Controllers\RegistrationController::class, 'showForm'])->name('form');
+    Route::get('/group/{package}', [App\Http\Controllers\RegistrationController::class, 'showGroupForm'])->name('group.form');
     Route::post('/', [App\Http\Controllers\RegistrationController::class, 'submit'])->name('submit');
+    Route::post('/group', [App\Http\Controllers\RegistrationController::class, 'submitGroup'])->name('group.submit');
 });
 
 Route::prefix('payment')->name('payment.')->group(function () {

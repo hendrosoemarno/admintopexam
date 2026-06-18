@@ -24,6 +24,7 @@ class SettingsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'min_students' => 'required|integer|min:1',
             'course_id' => 'required|integer|min:1',
             'course_name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
@@ -42,6 +43,7 @@ class SettingsController extends Controller
             'package_id' => 'required|exists:packages,id',
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'min_students' => 'required|integer|min:1',
             'course_id' => 'required|integer|min:1',
             'course_name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
@@ -52,6 +54,7 @@ class SettingsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'min_students' => 'required|integer|min:1',
             'course_id' => 'required|integer|min:1',
             'course_name' => 'nullable|string|max:255',
             'description' => 'nullable|string',

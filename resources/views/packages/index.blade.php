@@ -27,14 +27,24 @@
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform transition hover:scale-105 hover:shadow-xl">
                     <div class="p-6">
                         <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $package->name }}</h3>
+                        @if ($package->min_students > 1)
+                            <p class="text-orange-600 text-sm font-semibold mb-1">Group &bull; Min {{ $package->min_students }} siswa</p>
+                        @endif
                         @if ($package->description)
                             <p class="text-gray-600 text-sm mb-4">{{ $package->description }}</p>
                         @endif
                         <p class="text-3xl font-bold text-blue-600 mb-4">Rp {{ number_format($package->price, 0, ',', '.') }}</p>
-                        <a href="{{ route('register.form', $package->id) }}"
-                           class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                            Daftar & Bayar
-                        </a>
+                        @if ($package->min_students > 1)
+                            <a href="{{ route('register.group.form', $package->id) }}"
+                               class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                                Daftar Group
+                            </a>
+                        @else
+                            <a href="{{ route('register.form', $package->id) }}"
+                               class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
+                                Daftar & Bayar
+                            </a>
+                        @endif
                     </div>
                 </div>
             @empty
