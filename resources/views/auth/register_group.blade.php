@@ -14,7 +14,7 @@
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Registrasi Group</h1>
                 <p class="text-gray-600 mt-1">{{ $package->name }}</p>
-                <p class="text-lg text-gray-500 mt-1">Min {{ $package->min_students }} siswa</p>
+                <p class="text-lg text-gray-500 mt-1">Max {{ $package->max_students }} siswa</p>
                 <p class="text-xl font-bold text-blue-600 mt-1">Rp {{ number_format($package->price, 0, ',', '.') }} <span class="text-sm font-normal text-gray-500">/group</span></p>
             </div>
 
@@ -42,7 +42,7 @@
                             <div class="flex justify-between items-center mb-3">
                                 <h4 class="font-semibold text-gray-700" x-text="'Siswa ' + (index + 1)"></h4>
                                 <button type="button" @click="removeStudent(index)"
-                                        x-show="students.length > minStudents"
+                                        x-show="students.length > 1"
                                         class="text-red-500 hover:text-red-700 text-sm">&times; Hapus</button>
                             </div>
                             <div class="grid grid-cols-2 gap-3">
@@ -84,9 +84,12 @@
 
                 <div class="mt-4">
                     <button type="button" @click="addStudent"
+                            x-show="students.length < maxStudents"
                             class="text-blue-600 hover:text-blue-800 text-sm font-semibold">
                         + Tambah Siswa
                     </button>
+                    <p x-show="students.length >= maxStudents"
+                            class="text-gray-400 text-sm">Maksimal {{ $package->max_students }} siswa tercapai</p>
                 </div>
 
                 <hr class="my-4">
@@ -122,15 +125,17 @@
 <script>
     function groupForm() {
         return {
-            minStudents: {{ $package->min_students }},
-            students: {!! json_encode(array_fill(0, $package->min_students, ['username' => '', 'password' => '', 'first_name' => '', 'last_name' => '', 'email' => ''])) !!},
+            maxStudents: {{ $package->max_students }},
+            students: {!! json_encode([['username' => '', 'password' => '', 'first_name' => '', 'last_name' => '', 'email' => '']]) !!},
 
             addStudent() {
-                this.students.push({ username: '', password: '', first_name: '', last_name: '', email: '' });
+                if (this.students.length < this.maxStudents) {
+                    this.students.push({ username: '', password: '', first_name: '', last_name: '', email: '' });
+                }
             },
 
             removeStudent(index) {
-                if (this.students.length > this.minStudents) {
+                if (this.students.length > 1) {
                     this.students.splice(index, 1);
                 }
             }

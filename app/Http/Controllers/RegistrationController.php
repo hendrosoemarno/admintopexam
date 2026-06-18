@@ -33,7 +33,7 @@ class RegistrationController extends Controller
             return redirect()->route('packages.index')->with('error', 'Paket tidak tersedia.');
         }
 
-        if ($package->min_students <= 1) {
+        if ($package->max_students <= 1) {
             return redirect()->route('register.form', $package->id);
         }
 
@@ -127,8 +127,8 @@ class RegistrationController extends Controller
         $package = Package::findOrFail($request->package_id);
         $students = $request->students;
 
-        if (count($students) < $package->min_students) {
-            return back()->with('error', 'Minimal ' . $package->min_students . ' siswa untuk paket ini.');
+        if (count($students) > $package->max_students) {
+            return back()->with('error', 'Maksimal ' . $package->max_students . ' siswa untuk paket ini.');
         }
 
         $amount = (float) $package->price;
