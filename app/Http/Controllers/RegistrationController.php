@@ -8,7 +8,6 @@ use App\Models\Transaction;
 use App\Services\DuitkuService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Crypt;
 
 class RegistrationController extends Controller
 {

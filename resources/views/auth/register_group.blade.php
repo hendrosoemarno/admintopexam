@@ -119,14 +119,11 @@
         </div>
     </div>
 
-</body>
-</html>
-
 <script>
     function groupForm() {
         return {
             minStudents: {{ $package->min_students }},
-            students: @json(array_fill(0, $package->min_students, ['username' => '', 'password' => '', 'first_name' => '', 'last_name' => '', 'email' => ''])),
+            students: {!! json_encode(array_fill(0, $package->min_students, ['username' => '', 'password' => '', 'first_name' => '', 'last_name' => '', 'email' => ''])) !!},
 
             addStudent() {
                 this.students.push({ username: '', password: '', first_name: '', last_name: '', email: '' });
@@ -140,3 +137,5 @@
         }
     }
 </script>
+</body>
+</html>
