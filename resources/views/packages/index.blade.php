@@ -34,11 +34,9 @@
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <span class="text-xl font-extrabold tracking-tight">
                 <span class="text-white">top</span><span class="text-orange-400">exam</span>
-                <span class="text-xs text-gray-500 ml-1 font-normal">.id</span>
             </span>
             <div class="flex items-center gap-4">
-                <a href="{{ route('dashboard') }}" class="text-sm text-gray-400 hover:text-white transition">Dashboard</a>
-                <a href="{{ route('moodle.login') }}" class="btn-primary text-white text-sm font-semibold px-5 py-2 rounded-full">Login</a>
+                <a href="https://lms.topexam.id/login" class="btn-primary text-white text-sm font-semibold px-5 py-2 rounded-full">Login</a>
             </div>
         </div>
     </nav>
