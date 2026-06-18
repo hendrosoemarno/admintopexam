@@ -47,7 +47,6 @@
     <section class="hero-glow min-h-screen flex items-center pt-16">
         <div class="max-w-6xl mx-auto px-4 py-16 md:py-24 w-full">
             <div class="text-center mb-16">
-                <span class="badge text-xs font-semibold px-4 py-1.5 rounded-full inline-block mb-6">🎉 Launching 10.10.25</span>
                 <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
                     Try Out <span class="gradient-text-orange">TKA</span><br>
                     <span class="text-gray-300">SD & SMP</span>
