@@ -10,9 +10,9 @@
         body { background: #0b0e1a; }
         .glow-blue { box-shadow: 0 0 30px rgba(59,130,246,.25); }
         .glow-orange { box-shadow: 0 0 30px rgba(251,146,60,.2); }
-        .glass { background: rgba(255,255,255,.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.06); }
-        .glass-card { background: rgba(11,14,26,.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.1); transition: all .3s ease; }
-        .glass-card:hover { background: rgba(11,14,26,.9); border-color: rgba(59,130,246,.4); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+        .glass { background: rgba(11,14,26,.7); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,.06); }
+        .glass-card { background: #11152a; border: 1px solid rgba(255,255,255,.08); border-radius: 1rem; transition: all .3s ease; }
+        .glass-card:hover { background: #161c36; border-color: rgba(59,130,246,.4); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
         .gradient-text { background: linear-gradient(135deg,#60a5fa,#38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .gradient-text-orange { background: linear-gradient(135deg,#fb923c,#f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .bg-grid { background-image: radial-gradient(rgba(255,255,255,.04) 1px,transparent 0); background-size: 40px 40px; }
@@ -83,13 +83,13 @@
                                 <div class="flex justify-between items-start mb-3">
                                     <h3 class="text-lg font-bold text-white">{{ $package->name }}</h3>
                                     @if ($package->max_students > 1)
-                                        <span class="text-xs bg-orange-500/15 text-orange-300 border border-orange-500/30 px-2 py-0.5 rounded-full font-medium">Group</span>
+                                        <span class="text-xs font-medium px-2.5 py-0.5 rounded-full" style="background:rgba(251,146,60,.2);color:#fb923c;border:1px solid rgba(251,146,60,.3)">Group</span>
                                     @else
-                                        <span class="text-xs bg-blue-500/15 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full font-medium">Individual</span>
+                                        <span class="text-xs font-medium px-2.5 py-0.5 rounded-full" style="background:rgba(96,165,250,.2);color:#93c5fd;border:1px solid rgba(96,165,250,.3)">Individual</span>
                                     @endif
                                 </div>
                                 @if ($package->max_students > 1)
-                                    <p class="text-orange-300 text-xs mb-3 font-medium">Max {{ $package->max_students }} siswa</p>
+                                    <p class="text-xs mb-3 font-medium" style="color:#fb923c">Max {{ $package->max_students }} siswa</p>
                                 @endif
                                 @if ($package->description)
                                     <p class="text-gray-400 text-sm mb-4">{{ $package->description }}</p>
@@ -97,7 +97,7 @@
                                 <p class="text-3xl font-bold gradient-text mb-6">Rp {{ number_format($package->price, 0, ',', '.') }}</p>
                                 @if ($package->max_students > 1)
                                     <a href="{{ route('register.group.form', $package->id) }}"
-                                       class="block w-full text-center bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-orange-600/25">
+                                       class="block w-full text-center text-white font-bold py-3 px-4 rounded-xl transition" style="background:#fb923c">
                                         Daftar Group
                                     </a>
                                 @else
