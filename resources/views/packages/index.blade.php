@@ -83,13 +83,13 @@
                                 <div class="flex justify-between items-start mb-3">
                                     <h3 class="text-lg font-bold text-white">{{ $package->name }}</h3>
                                     @if ($package->max_students > 1)
-                                        <span class="text-xs bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2 py-0.5 rounded-full">Group</span>
+                                        <span class="text-xs bg-orange-500/15 text-orange-300 border border-orange-500/30 px-2 py-0.5 rounded-full font-medium">Group</span>
                                     @else
-                                        <span class="text-xs bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">Individual</span>
+                                        <span class="text-xs bg-blue-500/15 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded-full font-medium">Individual</span>
                                     @endif
                                 </div>
                                 @if ($package->max_students > 1)
-                                    <p class="text-orange-400/70 text-xs mb-3">Max {{ $package->max_students }} siswa</p>
+                                    <p class="text-orange-300 text-xs mb-3 font-medium">Max {{ $package->max_students }} siswa</p>
                                 @endif
                                 @if ($package->description)
                                     <p class="text-gray-400 text-sm mb-4">{{ $package->description }}</p>
@@ -97,7 +97,7 @@
                                 <p class="text-3xl font-bold gradient-text mb-6">Rp {{ number_format($package->price, 0, ',', '.') }}</p>
                                 @if ($package->max_students > 1)
                                     <a href="{{ route('register.group.form', $package->id) }}"
-                                       class="block w-full text-center bg-orange-600 hover:bg-orange-500 text-white font-semibold py-2.5 px-4 rounded-xl transition">
+                                       class="block w-full text-center bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-400 hover:to-orange-500 text-white font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-orange-600/25">
                                         Daftar Group
                                     </a>
                                 @else
