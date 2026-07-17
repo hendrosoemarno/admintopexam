@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Moodle</title>
+    <title>Login Admin Top Exam</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
 
 <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-2xl font-semibold mb-4 text-center">Login Moodle</h2>
+    <h2 class="text-2xl font-semibold mb-4 text-center">Login Admin Top Exam</h2>
 
     @if ($errors->any())
         <div class="bg-red-100 text-red-700 p-2 rounded mb-3">
