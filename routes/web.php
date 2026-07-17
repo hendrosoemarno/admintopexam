@@ -11,7 +11,7 @@ use App\Http\Controllers\StudentTryoutFullController;
 use App\Http\Controllers\StudentTryoutWhatsappController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Route::get('/login', [MoodleLoginController::class, 'showLoginForm'])->name('moodle.login');
