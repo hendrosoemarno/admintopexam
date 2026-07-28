@@ -48,12 +48,20 @@ class RegistrationController extends Controller
         $validated = $request->validate([
             'package_id' => 'required|exists:packages,id,is_active,1',
             'username' => 'required|string|min:3|max:100',
-            'password' => ['required', 'string', 'min:8', 'regex:/[^\w\s]/'],
+            'password' => [
+                'required', 'string', 'min:8',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[^\w\s]/',
+            ],
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'email' => 'required|email',
             'coupon_code' => 'nullable|string|max:50',
             'payment_method' => 'required|string|max:2',
+        ], [
+            'password.regex' => 'Password harus mengandung minimal 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 karakter spesial.',
         ]);
 
         $package = Package::findOrFail($validated['package_id']);
@@ -116,12 +124,20 @@ class RegistrationController extends Controller
             'package_id' => 'required|exists:packages,id,is_active,1',
             'students' => 'required|array',
             'students.*.username' => 'required|string|min:3|max:100',
-            'students.*.password' => ['required', 'string', 'min:8', 'regex:/[^\w\s]/'],
+            'students.*.password' => [
+                'required', 'string', 'min:8',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[^\w\s]/',
+            ],
             'students.*.first_name' => 'required|string|max:100',
             'students.*.last_name' => 'required|string|max:100',
             'students.*.email' => 'required|email',
             'coupon_code' => 'nullable|string|max:50',
             'payment_method' => 'required|string|max:2',
+        ], [
+            'students.*.password.regex' => 'Password setiap siswa harus mengandung minimal 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 karakter spesial.',
         ]);
 
         $package = Package::findOrFail($request->package_id);
