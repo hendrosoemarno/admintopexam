@@ -6,8 +6,8 @@ use App\Models\Coupon;
 use App\Models\Package;
 use App\Models\Transaction;
 use App\Services\DuitkuService;
-use App\Services\MoodleApiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RegistrationController extends Controller
@@ -44,7 +44,7 @@ class RegistrationController extends Controller
         return view('auth.register_group', compact('package', 'paymentMethods'));
     }
 
-    public function submit(Request $request, DuitkuService $duitku, MoodleApiService $moodle)
+    public function submit(Request $request, DuitkuService $duitku)
     {
         $validated = $request->validate([
             'package_id' => 'required|exists:packages,id,is_active,1',
@@ -65,7 +65,7 @@ class RegistrationController extends Controller
             'password.regex' => 'Password harus mengandung minimal 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 karakter spesial.',
         ]);
 
-        if ($moodle->findUserByUsername($validated['username'])) {
+        if (DB::connection('moodle')->table('user')->where('username', $validated['username'])->where('deleted', 0)->exists()) {
             return back()->withInput()->withErrors(['username' => 'Username sudah terdaftar di sistem. Silakan gunakan username lain.']);
         }
 
@@ -123,7 +123,7 @@ class RegistrationController extends Controller
         }
     }
 
-    public function submitGroup(Request $request, DuitkuService $duitku, MoodleApiService $moodle)
+    public function submitGroup(Request $request, DuitkuService $duitku)
     {
         $request->validate([
             'package_id' => 'required|exists:packages,id,is_active,1',
@@ -146,7 +146,7 @@ class RegistrationController extends Controller
         ]);
 
         foreach ($request->students as $i => $student) {
-            if ($moodle->findUserByUsername($student['username'])) {
+            if (DB::connection('moodle')->table('user')->where('username', $student['username'])->where('deleted', 0)->exists()) {
                 return back()->withInput()->withErrors(['students.' . $i . '.username' => 'Username "' . $student['username'] . '" sudah terdaftar. Gunakan username lain.']);
             }
         }
