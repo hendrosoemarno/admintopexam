@@ -6,6 +6,7 @@ use App\Models\Coupon;
 use App\Models\Package;
 use App\Models\Transaction;
 use App\Services\DuitkuService;
+use App\Services\MoodleApiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -43,7 +44,7 @@ class RegistrationController extends Controller
         return view('auth.register_group', compact('package', 'paymentMethods'));
     }
 
-    public function submit(Request $request, DuitkuService $duitku)
+    public function submit(Request $request, DuitkuService $duitku, MoodleApiService $moodle)
     {
         $validated = $request->validate([
             'package_id' => 'required|exists:packages,id,is_active,1',
@@ -63,6 +64,10 @@ class RegistrationController extends Controller
         ], [
             'password.regex' => 'Password harus mengandung minimal 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 karakter spesial.',
         ]);
+
+        if ($moodle->findUserByUsername($validated['username'])) {
+            return back()->withInput()->withErrors(['username' => 'Username sudah terdaftar di sistem. Silakan gunakan username lain.']);
+        }
 
         $package = Package::findOrFail($validated['package_id']);
         $amount = (float) $package->price;
@@ -118,7 +123,7 @@ class RegistrationController extends Controller
         }
     }
 
-    public function submitGroup(Request $request, DuitkuService $duitku)
+    public function submitGroup(Request $request, DuitkuService $duitku, MoodleApiService $moodle)
     {
         $request->validate([
             'package_id' => 'required|exists:packages,id,is_active,1',
@@ -139,6 +144,12 @@ class RegistrationController extends Controller
         ], [
             'students.*.password.regex' => 'Password setiap siswa harus mengandung minimal 1 huruf kecil, 1 huruf besar, 1 angka, dan 1 karakter spesial.',
         ]);
+
+        foreach ($request->students as $i => $student) {
+            if ($moodle->findUserByUsername($student['username'])) {
+                return back()->withInput()->withErrors(['students.' . $i . '.username' => 'Username "' . $student['username'] . '" sudah terdaftar. Gunakan username lain.']);
+            }
+        }
 
         $package = Package::findOrFail($request->package_id);
         $students = $request->students;
